@@ -1,0 +1,36 @@
+.button {
+  width: 120px;
+  height: 40px;
+  border-radius: 4px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 0;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.015em;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.input-element {
+  width: 240px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  height: 40px;
+  color: #333;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 0.03em;
+  padding-left: 10px;
+  background-color: #f8f8f8;
+}
+
+.div-erro {
+  margin-top: 0 !important;
+  margin-bottom: 0.4rem;
+}

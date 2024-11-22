@@ -1,0 +1,57 @@
+.treinamento-card-container {
+  width: calc(100% - 20px);
+  height: 300px;
+  margin: 20px 10px;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid #eee;
+  box-shadow: 1px 0 12px 4px #ccc;
+  display: flex;
+  flex-direction: column;
+}
+
+.treinamento-card-content {
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.treinamento-card-content h4 {
+  margin-bottom: 15px;
+  font-size: 19px;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+.treinamento-card-content span {
+  font-weight: 300;
+  font-size: 15px;
+  margin-left: 12px;
+  margin-bottom: 4px;
+}
+
+.treinamento-card-content span b {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.treinamento-card-buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+@media (min-width: 576px) {
+  .treinamento-card-container {
+    width: 450px;
+    margin: 20px auto;
+  }
+
+  .treinamento-card-content h4 {
+    margin-bottom: 25px;
+    text-align: center;
+  }
+}

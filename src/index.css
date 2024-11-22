@@ -1,5 +1,5 @@
 .button {
-  width: 120px;
+  min-width: 120px;
   height: 40px;
   border-radius: 4px;
   margin-top: 5px;
@@ -8,10 +8,26 @@
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0.015em;
+  padding: 0 5px;
+}
+
+.create-button {
+  background-color: #36a304;
+  color: #fff;
 }
 
 .submit-button {
   background-color: #007bff;
+  color: #fff;
+}
+
+.edit-button {
+  background-color: #b47b00;
+  color: #fff;
+}
+
+.delete-button {
+  background-color: #b11f05;
   color: #fff;
 }
 

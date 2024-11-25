@@ -1,7 +1,7 @@
 import { TreinamentoType } from "types/treinamento";
 import "./styles.css";
 import { Link } from "react-router-dom";
-import { formatarData } from "utils/functions";
+import { formatarData, formatarStatus, formatarTipo } from "utils/functions";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
@@ -38,37 +38,80 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
   };
 
   return (
-    <div className="treinamento-card-container">
-      <div className="treinamento-card-content">
-        <h4>{element.treinamento}</h4>
-        <span>
-          <b>Material:</b> {element.material}
-        </span>
-        <span>
-          <b>SAD:</b> {element.sad.toUpperCase()}
-        </span>
-        <span>
-          <b>Data ínicio:</b> {formatarData(element.dataInicio)}
-        </span>
-        <span>
-          <b>Data fim:</b> {formatarData(element.dataInicio)}
-        </span>
-      </div>
-      <div className="treinamento-card-buttons">
-        <Link to={`/sgc/treinamento/${element.id}`}>
-          <button className="button edit-button" type="button">
-            <i className="bi bi-pencil" />
+    <tr className="treinamento-card-container">
+      <td>
+        <div className="treinamento-card-content">{element.treinamento}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.material}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.om}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.brigada}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">
+          {formatarTipo(element.tipo)}
+        </div>
+      </td>
+      <td>
+        <div className="treinament-card-content">
+          {element.executor === 1 ? "EB" : "Empresa"}
+        </div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.instituicao}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">
+          {formatarStatus(element.status)}
+        </div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.vagas}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.subsistema}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">
+          {element.sad.toUpperCase()}
+        </div>
+      </td>
+      <td>
+        <div className="treinament-card-content">
+          {formatarData(element.dataInicio)}
+        </div>
+      </td>
+      <td>
+        <div className="treinament-card-content">
+          {formatarData(element.dataInicio)}
+        </div>
+      </td>
+      <td>
+        <div className="treinamento-card-buttons">
+          <button className="act-button submit-button">
+            <Link className="act-button submit-button" to={`/sgc/treinamento/visualizar/${element.id}`}>
+              <i className="bi bi-file-earmark-text" />
+            </Link>
           </button>
-        </Link>
-        <button
-          className="button delete-button"
-          type="button"
-          onClick={() => deleteElement(element.id)}
-        >
-          <i className="bi bi-trash" />
-        </button>
-      </div>
-    </div>
+          <button className="act-button edit-button" type="button">
+            <Link className="act-button-link" to={`/sgc/treinamento/${element.id}`}>
+              <i className="bi bi-pencil" />
+            </Link>
+          </button>
+          <button
+            className="act-button delete-button"
+            type="button"
+            onClick={() => deleteElement(element.id)}
+          >
+            <i className="bi bi-trash" />
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 };
 

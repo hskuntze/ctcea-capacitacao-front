@@ -23,7 +23,7 @@ export type TreinamentoType = {
   logisticaTreinamento: string;
   nivelamento: boolean;
   cargaHoraria: number;
-  publicoAlvo: boolean;
+  publicoAlvo: number;
   descricaoAtividade: string;
   materialDidatico: string;
   observacoes: string;

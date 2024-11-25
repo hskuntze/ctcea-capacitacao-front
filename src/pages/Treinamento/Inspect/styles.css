@@ -1,0 +1,33 @@
+.treinamento-inspect-container {
+  margin: 20px;
+  width: calc(100% - 40px);
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 1px 0 10px 6px #ccc;
+}
+
+.treinamento-inspect-content {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.treinamento-inspect-content span {
+  margin: 3px 0;
+  font-size: 16px;
+  letter-spacing: -0.025rem;
+}
+
+@media (min-width: 768px) {
+  .treinamento-inspect-content span {
+    margin: 4px 0;
+    font-size: 17px;
+    letter-spacing: -0.025rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .treinamento-inspect-content h5 {
+    font-size: 22px;
+  }
+}

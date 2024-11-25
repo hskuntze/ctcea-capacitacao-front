@@ -17,15 +17,6 @@
   width: 300px;
 }
 
-.login-form span {
-  text-align: center;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  width: 80%;
-  font-size: 14px;
-  font-weight: 700;
-}
-
 .login-form-content {
   display: flex;
   flex-direction: column;
@@ -46,16 +37,16 @@
 
 @media (min-width: 992px) {
   .login-container {
-    height: 450px;
+    height: 100vh;
   }
 
   .login-form {
-    width: 780px;
+    width: 900px;
     flex-direction: row;
   }
 
   .login-form-content {
-    min-height: 290px;
+    min-height: 400px;
   }
 
   .login-form-logo {
@@ -63,7 +54,7 @@
   }
 
   .login-form-logo img {
-    width: 250px;
-    height: 137px;
+    width: 330px;
+    height: 187px;
   }
 }

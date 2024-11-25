@@ -11,6 +11,19 @@
   padding: 0 5px;
 }
 
+.act-button {
+  min-width: 70px;
+  height: 40px;
+  border-radius: 4px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 0;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.015em;
+  padding: 0 5px;
+}
+
 .create-button {
   background-color: #36a304;
   color: #fff;
@@ -49,4 +62,30 @@
 .div-erro {
   margin-top: 0 !important;
   margin-bottom: 0.4rem;
+}
+
+.button-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.pagination-select-label,
+.pagination-displayed-rows-label {
+  margin: 0;
+}
+
+.pagination-toolbar {
+  display: flex;
+  width: 100%;
+}
+
+.no-elements-on-table {
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: #ff7860;
 }

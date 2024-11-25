@@ -10,6 +10,7 @@ import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
 import { TreinamentoType } from "types/treinamento";
+import { OM } from "types/om";
 
 type FormData = {
   sad: string;
@@ -61,6 +62,40 @@ const TreinamentoForm = () => {
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [oms, setOms] = useState<OM[]>();
+  const [bdas, setBdas] = useState<string[]>();
+
+  const loadOms = useCallback(() => {
+    const requestOmParams: AxiosRequestConfig = {
+      url: "/oms",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestOmParams)
+      .then((res) => {
+        setOms(res.data as OM[]);
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  }, []);
+
+  const loadBdas = useCallback(() => {
+    const requestOmParams: AxiosRequestConfig = {
+      url: "/oms/bdas",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestOmParams)
+      .then((res) => {
+        setBdas(res.data as string[]);
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  }, []);
 
   const loadInfo = useCallback(() => {
     if (isEditing) {
@@ -74,16 +109,14 @@ const TreinamentoForm = () => {
         .then((res) => {
           let data = res.data as TreinamentoType;
 
-          console.log(data.avaliacaoPratica);
-
           setValue("sad", data.sad);
           setValue("tipo", String(data.tipo));
           setValue("material", data.material);
           setValue("treinamento", data.treinamento);
           setValue("subsistema", data.subsistema);
           setValue("modalidade", String(data.modalidade));
-          setValue("brigada", data.brigada);
-          setValue("om", data.om);
+          setValue("brigada", String(data.brigada));
+          setValue("om", String(data.om));
           setValue("grupo", String(data.grupo));
           setValue("executor", String(data.executor));
           setValue("instituicao", data.instituicao);
@@ -91,8 +124,14 @@ const TreinamentoForm = () => {
           setValue("dataFim", dayjs(data.dataFim));
           setValue("vagas", data.vagas);
           setValue("status", String(data.status));
-          setValue("avaliacaoPratica", data.avaliacaoPratica === true ? "1" : "0");
-          setValue("avaliacaoTeorica", data.avaliacaoTeorica === true ? "1" : "0");
+          setValue(
+            "avaliacaoPratica",
+            data.avaliacaoPratica === true ? "1" : "0"
+          );
+          setValue(
+            "avaliacaoTeorica",
+            data.avaliacaoTeorica === true ? "1" : "0"
+          );
           setValue("nomeInstrutores", data.nomeInstrutores);
           setValue("contatoInstrutores", data.contatoInstrutores);
           setValue("certificado", data.certificado === true ? "1" : "0");
@@ -100,13 +139,13 @@ const TreinamentoForm = () => {
           setValue("nivelamento", data.nivelamento === true ? "1" : "0");
           setValue("preRequisitos", data.preRequisitos);
           setValue("cargaHoraria", data.cargaHoraria);
-          setValue("publicoAlvo", data.publicoAlvo === true ? "1" : "0");
+          setValue("publicoAlvo", String(data.publicoAlvo));
           setValue("descricaoAtividade", data.descricaoAtividade);
           setValue("materialDidatico", data.materialDidatico);
           setValue("observacoes", data.observacoes);
         })
         .catch((err) => {
-          console.log(err);
+          toast.error("Não foi possível carregar os registros de treinamento.");
         });
     }
   }, [isEditing, urlParams.id, setValue]);
@@ -122,9 +161,6 @@ const TreinamentoForm = () => {
     let status = Number(formData.status);
     let dataInicio = formData.dataInicio.format("YYYY-MM-DD");
     let dataFim = formData.dataFim.format("YYYY-MM-DD");
-
-    console.log(dataInicio);
-    console.log(dataFim);
 
     const requestParams: AxiosRequestConfig = {
       url: `${
@@ -185,7 +221,9 @@ const TreinamentoForm = () => {
 
   useEffect(() => {
     loadInfo();
-  }, [loadInfo]);
+    loadOms();
+    loadBdas();
+  }, [loadInfo, loadOms, loadBdas]);
 
   return (
     <div className="treinamento-container">
@@ -203,7 +241,8 @@ const TreinamentoForm = () => {
                 <option value="">Selecione uma opção</option>
                 <option value="sad1">SAD1</option>
                 <option value="sad2">SAD2</option>
-                <option value="sad4">SAD4</option>
+                <option value="sad3">SAD3</option>
+                <option value="sad3a">SAD3A</option>
                 <option value="sad7">SAD7</option>
               </select>
               <label htmlFor="sad">SAD</label>
@@ -214,19 +253,12 @@ const TreinamentoForm = () => {
             <div className="treinamento-input-group form-floating">
               <input
                 type="text"
-                className={`form-control ${
-                  errors.material ? "is-invalid" : ""
-                }`}
-                id="material"
-                placeholder="Material"
-                {...register("material", {
-                  required: "Campo obrigatório",
-                })}
+                className={`form-control`}
+                id="id-treinamento"
+                placeholder="ID do treinamento"
+                disabled
               />
-              <label htmlFor="material">Material</label>
-              <div className="invalid-feedback d-block">
-                {errors.material?.message}
-              </div>
+              <label htmlFor="id-treinamento">ID do curso</label>
             </div>
             <div className="treinamento-input-group form-floating">
               <input
@@ -245,8 +277,9 @@ const TreinamentoForm = () => {
                 {errors.treinamento?.message}
               </div>
             </div>
+
             <div className="treinamento-input-group treinamento-radio-input-group">
-              <span>Tipo</span>
+              <span>Emergencial/previsto</span>
               <div className="form-check">
                 <input
                   type="radio"
@@ -294,6 +327,109 @@ const TreinamentoForm = () => {
               </div>
             </div>
             <div className="treinamento-input-group form-floating">
+              <input
+                type="text"
+                className={`form-control ${
+                  errors.material ? "is-invalid" : ""
+                }`}
+                id="material"
+                placeholder="Material"
+                {...register("material", {
+                  required: "Campo obrigatório",
+                })}
+              />
+              <label htmlFor="material">Material/equipamento</label>
+              <div className="invalid-feedback d-block">
+                {errors.material?.message}
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <select
+                id="status"
+                className={`form-select ${errors.status ? "is-invalid" : ""}`}
+                {...register("status", {
+                  required: "Campo obrigatório",
+                })}
+              >
+                <option value="">Selecione uma opção</option>
+                <option value="1">Cancelada</option>
+                <option value="2">Realizada</option>
+                <option value="3">Adiada</option>
+              </select>
+              <label htmlFor="status">Status</label>
+              <div className="invalid-feedback d-block">
+                {errors.status?.message}
+              </div>
+            </div>
+
+            <div className="treinamento-input-group form-floating">
+              <select
+                id="brigada"
+                className={`form-select ${errors.brigada ? "is-invalid" : ""}`}
+                {...register("brigada", {
+                  required: "Campo obrigatório",
+                })}
+              >
+                <option value="">Selecione uma brigada</option>
+                {bdas && bdas.map((bda) => <option value={bda}>{bda}</option>)}
+              </select>
+              <label htmlFor="brigada">Brigada</label>
+              <div className="invalid-feedback d-block">
+                {errors.brigada?.message}
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <select
+                id="om"
+                className={`form-select ${errors.om ? "is-invalid" : ""}`}
+                {...register("om", {
+                  required: "Campo obrigatório",
+                })}
+              >
+                <option value="">Selecione uma OM</option>
+                {oms &&
+                  oms.map((om) => <option value={om.sigla}>{om.sigla}</option>)}
+              </select>
+              <label htmlFor="om">OM</label>
+              <div className="invalid-feedback d-block">
+                {errors.om?.message}
+              </div>
+            </div>
+
+            <div className="treinamento-input-group treinamento-radio-input-group">
+              <span>Turma</span>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.grupo ? "is-invalid" : ""
+                  }`}
+                  value="1"
+                  id="grupo01"
+                  {...register("grupo", { required: "Campo obrigatório" })}
+                />
+                <label htmlFor="grupo01">Turma 01</label>
+                <div className="invalid-feedback d-block">
+                  {errors.grupo?.message}
+                </div>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.grupo ? "is-invalid" : ""
+                  }`}
+                  value="2"
+                  id="ead"
+                  {...register("grupo", { required: "Campo obrigatório" })}
+                />
+                <label htmlFor="grupo02">Turma 02</label>
+                <div className="invalid-feedback d-block">
+                  {errors.grupo?.message}
+                </div>
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
               <select
                 id="subsistema"
                 className={`form-select ${
@@ -312,7 +448,7 @@ const TreinamentoForm = () => {
                 <option value="Infraestrutura">Infraestrutura</option>
                 <option value="SLI">SLI</option>
               </select>
-              <label htmlFor="subsistema">Subsistema</label>
+              <label htmlFor="subsistema">Conjunto</label>
               <div className="invalid-feedback d-block">
                 {errors.subsistema?.message}
               </div>
@@ -362,69 +498,6 @@ const TreinamentoForm = () => {
                 <label htmlFor="hibrido">Híbrido</label>
                 <div className="invalid-feedback d-block">
                   {errors.modalidade?.message}
-                </div>
-              </div>
-            </div>
-            <div className="treinamento-input-group form-floating">
-              <input
-                type="text"
-                className={`form-control ${errors.brigada ? "is-invalid" : ""}`}
-                id="brigada"
-                placeholder="Brigada"
-                {...register("brigada", {
-                  required: "Campo obrigatório",
-                })}
-              />
-              <label htmlFor="brigada">Brigada</label>
-              <div className="invalid-feedback d-block">
-                {errors.brigada?.message}
-              </div>
-            </div>
-            <div className="treinamento-input-group form-floating">
-              <input
-                type="text"
-                className={`form-control ${errors.om ? "is-invalid" : ""}`}
-                id="om"
-                placeholder="OM"
-                {...register("om", {
-                  required: "Campo obrigatório",
-                })}
-              />
-              <label htmlFor="om">OM</label>
-              <div className="invalid-feedback d-block">
-                {errors.om?.message}
-              </div>
-            </div>
-            <div className="treinamento-input-group treinamento-radio-input-group">
-              <span>Grupo</span>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className={`form-check-input ${
-                    errors.grupo ? "is-invalid" : ""
-                  }`}
-                  value="1"
-                  id="grupo01"
-                  {...register("grupo", { required: "Campo obrigatório" })}
-                />
-                <label htmlFor="grupo01">Grupo 01</label>
-                <div className="invalid-feedback d-block">
-                  {errors.grupo?.message}
-                </div>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className={`form-check-input ${
-                    errors.grupo ? "is-invalid" : ""
-                  }`}
-                  value="2"
-                  id="ead"
-                  {...register("grupo", { required: "Campo obrigatório" })}
-                />
-                <label htmlFor="grupo02">Grupo 02</label>
-                <div className="invalid-feedback d-block">
-                  {errors.grupo?.message}
                 </div>
               </div>
             </div>
@@ -542,27 +615,190 @@ const TreinamentoForm = () => {
               </div>
             </div>
             <div className="treinamento-input-group form-floating">
-              <select
-                id="status"
-                className={`form-select ${errors.status ? "is-invalid" : ""}`}
-                {...register("status", {
+              <textarea
+                className={`form-control ${
+                  errors.descricaoAtividade ? "is-invalid" : ""
+                }`}
+                id="descricao-atividade"
+                placeholder="Descrição da atividade"
+                {...register("descricaoAtividade", {
                   required: "Campo obrigatório",
                 })}
-              >
-                <option value="">Selecione uma opção</option>
-                <option value="1">Prevista</option>
-                <option value="2">Emergencial</option>
-                <option value="3">Cancelada</option>
-                <option value="4">Realizada</option>
-                <option value="5">Adiada</option>
-              </select>
-              <label htmlFor="status">Status</label>
+                rows={10}
+              />
+              <label htmlFor="descricao-atividade">
+                Descrição da atividade
+              </label>
               <div className="invalid-feedback d-block">
-                {errors.status?.message}
+                {errors.descricaoAtividade?.message}
               </div>
             </div>
           </div>
           <div className="treinamento-right">
+            <div className="treinamento-input-group treinamento-radio-input-group">
+              <span>Público-alvo</span>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.publicoAlvo ? "is-invalid" : ""
+                  }`}
+                  value="1"
+                  id="publico-alvo-militar"
+                  {...register("publicoAlvo", {
+                    required: "Campo obrigatório",
+                  })}
+                />
+                <label htmlFor="publico-alvo-militar">Militar</label>
+                <div className="invalid-feedback d-block">
+                  {errors.publicoAlvo?.message}
+                </div>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.publicoAlvo ? "is-invalid" : ""
+                  }`}
+                  value="2"
+                  id="publico-alvo-civil"
+                  {...register("publicoAlvo", {
+                    required: "Campo obrigatório",
+                  })}
+                />
+                <label htmlFor="publico-alvo-civil">Civil</label>
+                <div className="invalid-feedback d-block">
+                  {errors.publicoAlvo?.message}
+                </div>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.publicoAlvo ? "is-invalid" : ""
+                  }`}
+                  value="3"
+                  id="publico-alvo-misto"
+                  {...register("publicoAlvo", {
+                    required: "Campo obrigatório",
+                  })}
+                />
+                <label htmlFor="publico-alvo-misto">Misto</label>
+                <div className="invalid-feedback d-block">
+                  {errors.publicoAlvo?.message}
+                </div>
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <input
+                type="text"
+                className={`form-control ${
+                  errors.cargaHoraria ? "is-invalid" : ""
+                }`}
+                id="carga-horaria"
+                placeholder="Carga horária"
+                {...register("cargaHoraria", {
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Apenas números são permitidos",
+                  },
+                })}
+              />
+              <label htmlFor="carga-horaria">Carga horária</label>
+              <div className="invalid-feedback d-block">
+                {errors.cargaHoraria?.message}
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <textarea
+                className={`form-control ${
+                  errors.preRequisitos ? "is-invalid" : ""
+                }`}
+                id="pre-requisitos"
+                placeholder="Pré-requisitos"
+                {...register("preRequisitos", {
+                  required: "Campo obrigatório",
+                })}
+                rows={10}
+              />
+              <label htmlFor="pre-requisitos">Pré-requisitos</label>
+              <div className="invalid-feedback d-block">
+                {errors.preRequisitos?.message}
+              </div>
+            </div>
+            <div className="treinamento-input-group treinamento-radio-input-group">
+              <span>Será necessário nivelamento do instruendo?</span>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.nivelamento ? "is-invalid" : ""
+                  }`}
+                  value="1"
+                  id="nivelamento-sim"
+                  {...register("nivelamento", {
+                    required: "Campo obrigatório",
+                  })}
+                />
+                <label htmlFor="nivelamento-sim">Sim</label>
+                <div className="invalid-feedback d-block">
+                  {errors.nivelamento?.message}
+                </div>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className={`form-check-input ${
+                    errors.nivelamento ? "is-invalid" : ""
+                  }`}
+                  value="0"
+                  id="nivelamento-nao"
+                  {...register("nivelamento", {
+                    required: "Campo obrigatório",
+                  })}
+                />
+                <label htmlFor="nivelamento-nao">Não</label>
+                <div className="invalid-feedback d-block">
+                  {errors.nivelamento?.message}
+                </div>
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <textarea
+                className={`form-control ${
+                  errors.logisticaTreinamento ? "is-invalid" : ""
+                }`}
+                id="logistica-treinamento"
+                placeholder="Logística do treinamento"
+                {...register("logisticaTreinamento", {
+                  required: "Campo obrigatório",
+                })}
+                rows={10}
+              />
+              <label htmlFor="logistica-treinamento">
+                Logística do treinamento
+              </label>
+              <div className="invalid-feedback d-block">
+                {errors.logisticaTreinamento?.message}
+              </div>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <textarea
+                className={`form-control ${
+                  errors.materialDidatico ? "is-invalid" : ""
+                }`}
+                id="material-didatico"
+                placeholder="Material didático"
+                {...register("materialDidatico", {
+                  required: "Campo obrigatório",
+                })}
+                rows={10}
+              />
+              <label htmlFor="material-didatico">Material didático</label>
+              <div className="invalid-feedback d-block">
+                {errors.materialDidatico?.message}
+              </div>
+            </div>
             <div className="treinamento-input-group treinamento-radio-input-group">
               <span>Avaliação prática?</span>
               <div className="form-check">
@@ -637,37 +873,6 @@ const TreinamentoForm = () => {
                 </div>
               </div>
             </div>
-            <div className="treinamento-input-group form-floating">
-              <input
-                type="text"
-                className={`form-control ${
-                  errors.nomeInstrutores ? "is-invalid" : ""
-                }`}
-                id="nome-instrutores"
-                placeholder="Nome dos instrutores"
-                {...register("nomeInstrutores", {
-                  required: "Campo obrigatório",
-                })}
-              />
-              <label htmlFor="nome-instrutores">Nome dos instrutores</label>
-              <div className="invalid-feedback d-block">
-                {errors.nomeInstrutores?.message}
-              </div>
-            </div>
-            <div className="treinamento-input-group form-floating">
-              <input
-                type="text"
-                className={`form-control ${
-                  errors.contatoInstrutores ? "is-invalid" : ""
-                }`}
-                id="contato-instrutores"
-                placeholder="Contato dos instrutores"
-                {...register("contatoInstrutores")}
-              />
-              <label htmlFor="contato-instrutores">
-                Contato dos instrutores
-              </label>
-            </div>
             <div className="treinamento-input-group treinamento-radio-input-group">
               <span>Certificado</span>
               <div className="form-check">
@@ -706,165 +911,35 @@ const TreinamentoForm = () => {
               </div>
             </div>
             <div className="treinamento-input-group form-floating">
-              <textarea
+              <input
+                type="text"
                 className={`form-control ${
-                  errors.logisticaTreinamento ? "is-invalid" : ""
+                  errors.nomeInstrutores ? "is-invalid" : ""
                 }`}
-                id="logistica-treinamento"
-                placeholder="Logística do treinamento"
-                {...register("logisticaTreinamento", {
+                id="nome-instrutores"
+                placeholder="Nome dos instrutores"
+                {...register("nomeInstrutores", {
                   required: "Campo obrigatório",
                 })}
-                rows={10}
               />
-              <label htmlFor="logistica-treinamento">
-                Logística do treinamento
-              </label>
+              <label htmlFor="nome-instrutores">Nome dos instrutores</label>
               <div className="invalid-feedback d-block">
-                {errors.logisticaTreinamento?.message}
-              </div>
-            </div>
-            <div className="treinamento-input-group treinamento-radio-input-group">
-              <span>Nivelamento</span>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className={`form-check-input ${
-                    errors.nivelamento ? "is-invalid" : ""
-                  }`}
-                  value="1"
-                  id="nivelamento-sim"
-                  {...register("nivelamento", {
-                    required: "Campo obrigatório",
-                  })}
-                />
-                <label htmlFor="nivelamento-sim">Sim</label>
-                <div className="invalid-feedback d-block">
-                  {errors.nivelamento?.message}
-                </div>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className={`form-check-input ${
-                    errors.nivelamento ? "is-invalid" : ""
-                  }`}
-                  value="0"
-                  id="nivelamento-nao"
-                  {...register("nivelamento", {
-                    required: "Campo obrigatório",
-                  })}
-                />
-                <label htmlFor="nivelamento-nao">Não</label>
-                <div className="invalid-feedback d-block">
-                  {errors.nivelamento?.message}
-                </div>
-              </div>
-            </div>
-            <div className="treinamento-input-group form-floating">
-              <textarea
-                className={`form-control ${
-                  errors.preRequisitos ? "is-invalid" : ""
-                }`}
-                id="pre-requisitos"
-                placeholder="Pré-requisitos"
-                {...register("preRequisitos", {
-                  required: "Campo obrigatório",
-                })}
-                rows={10}
-              />
-              <label htmlFor="pre-requisitos">Pré-requisitos</label>
-              <div className="invalid-feedback d-block">
-                {errors.preRequisitos?.message}
+                {errors.nomeInstrutores?.message}
               </div>
             </div>
             <div className="treinamento-input-group form-floating">
               <input
                 type="text"
                 className={`form-control ${
-                  errors.cargaHoraria ? "is-invalid" : ""
+                  errors.contatoInstrutores ? "is-invalid" : ""
                 }`}
-                id="carga-horaria"
-                placeholder="Carga horária"
-                {...register("cargaHoraria")}
+                id="contato-instrutores"
+                placeholder="Contato dos instrutores"
+                {...register("contatoInstrutores")}
               />
-              <label htmlFor="carga-horaria">Carga horária</label>
-              <div className="invalid-feedback d-block">
-                {errors.cargaHoraria?.message}
-              </div>
-            </div>
-            <div className="treinamento-input-group treinamento-radio-input-group">
-              <span>Público-alvo</span>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className={`form-check-input ${
-                    errors.publicoAlvo ? "is-invalid" : ""
-                  }`}
-                  value="1"
-                  id="publico-alvo-sim"
-                  {...register("publicoAlvo", {
-                    required: "Campo obrigatório",
-                  })}
-                />
-                <label htmlFor="publico-alvo-sim">Sim</label>
-                <div className="invalid-feedback d-block">
-                  {errors.publicoAlvo?.message}
-                </div>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className={`form-check-input ${
-                    errors.publicoAlvo ? "is-invalid" : ""
-                  }`}
-                  value="0"
-                  id="publico-alvo-nao"
-                  {...register("publicoAlvo", {
-                    required: "Campo obrigatório",
-                  })}
-                />
-                <label htmlFor="publico-alvo-nao">Não</label>
-                <div className="invalid-feedback d-block">
-                  {errors.publicoAlvo?.message}
-                </div>
-              </div>
-            </div>
-            <div className="treinamento-input-group form-floating">
-              <textarea
-                className={`form-control ${
-                  errors.descricaoAtividade ? "is-invalid" : ""
-                }`}
-                id="descricao-atividade"
-                placeholder="Descrição da atividade"
-                {...register("descricaoAtividade", {
-                  required: "Campo obrigatório",
-                })}
-                rows={10}
-              />
-              <label htmlFor="descricao-atividade">
-                Descrição da atividade
+              <label htmlFor="contato-instrutores">
+                Contato dos instrutores
               </label>
-              <div className="invalid-feedback d-block">
-                {errors.descricaoAtividade?.message}
-              </div>
-            </div>
-            <div className="treinamento-input-group form-floating">
-              <textarea
-                className={`form-control ${
-                  errors.materialDidatico ? "is-invalid" : ""
-                }`}
-                id="material-didatico"
-                placeholder="Material didático"
-                {...register("materialDidatico", {
-                  required: "Campo obrigatório",
-                })}
-                rows={10}
-              />
-              <label htmlFor="material-didatico">Material didático</label>
-              <div className="invalid-feedback d-block">
-                {errors.materialDidatico?.message}
-              </div>
             </div>
             <div className="treinamento-input-group form-floating">
               <textarea

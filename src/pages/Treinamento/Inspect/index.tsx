@@ -69,9 +69,6 @@ const TreinamentoInspect = () => {
             <b>OM:</b> {treinamento?.om}
           </span>
           <span>
-            <b>Grupo:</b> {treinamento?.grupo === 1 ? "Grupo 01" : "Grupo 02"}
-          </span>
-          <span>
             <b>Executor:</b> {treinamento?.executor === 1 ? "EB" : "Empresa"}
           </span>
           <span>
@@ -98,12 +95,6 @@ const TreinamentoInspect = () => {
             {treinamento?.avaliacaoTeorica ? "Sim" : "Não"}
           </span>
           <span>
-            <b>Nome dos Instrutores:</b> {treinamento?.nomeInstrutores}
-          </span>
-          <span>
-            <b>Contato dos Instrutores:</b> {treinamento?.contatoInstrutores}
-          </span>
-          <span>
             <b>Certificado:</b> {treinamento?.certificado ? "Sim" : "Não"}
           </span>
           <span>
@@ -120,9 +111,6 @@ const TreinamentoInspect = () => {
           </span>
           <span>
             <b>Descrição da Atividade:</b> {treinamento?.descricaoAtividade}
-          </span>
-          <span>
-            <b>Material Didático:</b> {treinamento?.materialDidatico}
           </span>
           <span>
             <b>Observações:</b> {treinamento?.observacoes}

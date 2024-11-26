@@ -76,7 +76,6 @@ const TreinamentoList = () => {
         status: formatarStatus(t.status),
         tipo: formatarTipo(t.tipo),
         modalidade: formatarModalidade(t.modalidade),
-        grupo: t.grupo === 1 ? "Grupo 01" : "Grupo 02",
         executor: t.executor === 1 ? "EB" : "Empresa",
       }));
 
@@ -121,15 +120,12 @@ const TreinamentoList = () => {
           "Avaliação Teórica",
           String(t.avaliacaoTeorica) === "1" ? "Sim" : "Não",
         ],
-        ["Nome Instrutores", t.nomeInstrutores],
-        ["Contato Instrutores", t.contatoInstrutores],
         ["Certificado", String(t.certificado) === "1" ? "Sim" : "Não"],
         ["Logística do t", t.logisticaTreinamento],
         ["Nivelamento", String(t.nivelamento)],
         ["Carga Horária", String(t.cargaHoraria)],
         ["Público Alvo", formatarPublicoAlvo(t.publicoAlvo)],
         ["Descrição da Atividade", t.descricaoAtividade],
-        ["Material Didático", t.materialDidatico],
         ["Observações", t.observacoes],
         ["Pré-Requisitos", t.preRequisitos],
       ];

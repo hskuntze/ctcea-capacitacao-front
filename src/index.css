@@ -24,24 +24,55 @@
   padding: 0 5px;
 }
 
+.round-button {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+
 .create-button {
   background-color: #36a304;
   color: #fff;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.create-button:hover {
+  background-color: #236e00ce;
 }
 
 .submit-button {
   background-color: #007bff;
   color: #fff;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.submit-button:hover {
+  background-color: #0053acec;
 }
 
 .edit-button {
   background-color: #b47b00;
   color: #fff;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.edit-button:hover {
+  background-color: #885d00e5;
 }
 
 .delete-button {
   background-color: #b11f05;
   color: #fff;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.delete-button:hover {
+  background-color: #791605e7;
 }
 
 .input-element {
@@ -88,4 +119,13 @@
   font-size: 16px;
   font-weight: 500;
   background-color: #ff7860;
+}
+
+.campo-obrigatorio {
+  color: #c71c1c;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }

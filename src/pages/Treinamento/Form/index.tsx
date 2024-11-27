@@ -14,8 +14,10 @@ import { OM } from "types/om";
 import { Instrutor } from "types/instrutor";
 import { MaterialDidatico } from "types/materialDidatico";
 import { Turma } from "types/turma";
+import { LogisticasTreinamento } from "types/logisticasTreinamento";
 
 type FormData = {
+  id: string;
   sad: string;
   material: string;
   treinamento: string;
@@ -43,6 +45,7 @@ type FormData = {
   publicoAlvo: string;
   descricaoAtividade: string;
   materialDidatico: File[];
+  logisticaTreinamentos: File[];
   observacoes: string;
   preRequisitos: string;
   instrutores: Instrutor[];
@@ -55,6 +58,7 @@ const TreinamentoForm = () => {
   const [oms, setOms] = useState<OM[]>();
   const [bdas, setBdas] = useState<string[]>();
   const [materialFiles, setMaterialFiles] = useState<MaterialDidatico[]>([]);
+  const [logisticaFiles, setLogisticaFiles] = useState<LogisticasTreinamento[]>([]);
 
   const {
     register,
@@ -132,9 +136,13 @@ const TreinamentoForm = () => {
     setDescNivelamento(false);
   };
 
-  const handleViewFile = (fileId: number, fileName: string) => {
+  const handleViewFile = (
+    endpoint: string,
+    fileId: number,
+    fileName: string
+  ) => {
     const requestParams: AxiosRequestConfig = {
-      url: `/treinamentos/download/materialDidatico/${fileId}`,
+      url: `/treinamentos/download/${endpoint}/${fileId}`,
       method: "GET",
       withCredentials: true,
       responseType: "blob",
@@ -156,23 +164,23 @@ const TreinamentoForm = () => {
 
         URL.revokeObjectURL(pdfUrl);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        toast.error("Erro ao tentar resgatar o arquivo.");
       });
   };
 
-  const handleFileDelete = (fileId: number) => {
+  const handleFileDelete = (endpoint: string, fileId: number) => {
     const requestParams: AxiosRequestConfig = {
-      url: `/treinamentos/deletar/materialDidatico/${fileId}`,
+      url: `/treinamentos/deletar/${endpoint}/${fileId}`,
       method: "DELETE",
       withCredentials: true,
     };
 
     requestBackend(requestParams)
-      .then((res) => {
+      .then(() => {
         toast.success("Arquivo deletado com sucesso.");
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("Erro ao deletar o arquivo.");
       });
   };
@@ -202,6 +210,7 @@ const TreinamentoForm = () => {
             setDescNivelamento(true);
           }
 
+          setValue("id", String(data.id));
           setValue("sad", data.sad);
           setValue("tipo", String(data.tipo));
           setValue("material", data.material);
@@ -241,25 +250,48 @@ const TreinamentoForm = () => {
             setValue(`instrutores.${index}`, instrutor);
           });
 
-          data.turmas.forEach(() => 
-            appendTurma({nome: ""})
-          );
+          data.turmas.forEach(() => appendTurma({ nome: "" }));
           data.turmas.forEach((turma, index) => {
             setValue(`turmas.${index}`, turma);
           });
 
-          let files: File[] = [];
+          let materialFiles: File[] = [];
           data.materiaisDidaticos.forEach((m) => {
-            files.push(
+            materialFiles.push(
               new File([m.fileContent], m.fileName, { type: "application/pdf" })
             );
           });
 
-          setValue("materialDidatico", files);
+          setValue("materialDidatico", materialFiles);
           setMaterialFiles(data.materiaisDidaticos);
+
+          let logisticaFiles: File[] = [];
+          data.logisticaTreinamentos.forEach((l) => {
+            logisticaFiles.push(
+              new File([l.fileContent], l.fileName, { type: "application/pdf" })
+            );
+          });
+
+          setValue("logisticaTreinamentos", logisticaFiles);
+          setLogisticaFiles(data.logisticaTreinamentos);
         })
-        .catch((err) => {
+        .catch(() => {
           toast.error("Não foi possível carregar os registros de treinamento.");
+        });
+    } else {
+      const requestParams: AxiosRequestConfig = {
+        url: `/treinamentos`,
+        withCredentials: true,
+        method: "GET",
+      };
+
+      requestBackend(requestParams)
+        .then((res) => {
+          let total = res.data.length + 1;
+          setValue("id", total);
+        })
+        .catch(() => {
+          toast.error("Erro ao resgatar o total de treinamentos.");
         });
     }
   }, [isEditing, urlParams.id, setValue, appendInstrutor, appendTurma]);
@@ -321,15 +353,13 @@ const TreinamentoForm = () => {
       .then((res) => {
         let data = res.data as TreinamentoType;
 
-        console.log(typeof formData.materialDidatico);
-        console.log(formData.materialDidatico);
         if (
           formData.materialDidatico instanceof FileList &&
           formData.materialDidatico.length > 0
         ) {
-          const filesArray = Array.from(formData.materialDidatico);
+          const materialFilesArray = Array.from(formData.materialDidatico);
 
-          filesArray.forEach((m) => {
+          materialFilesArray.forEach((m) => {
             const fd = new FormData();
             fd.append("file", m);
             fd.append("id", String(data.id));
@@ -351,13 +381,42 @@ const TreinamentoForm = () => {
           });
         }
 
+        if (
+          formData.logisticaTreinamentos instanceof FileList &&
+          formData.logisticaTreinamentos.length > 0
+        ) {
+          const logisticaFilesArray = Array.from(
+            formData.logisticaTreinamentos
+          );
+
+          logisticaFilesArray.forEach((l) => {
+            const fd = new FormData();
+            fd.append("file", l);
+            fd.append("id", String(data.id));
+
+            const requestUploadFile: AxiosRequestConfig = {
+              url: `/treinamentos/upload/logisticaTreinamento`,
+              method: "POST",
+              withCredentials: true,
+              data: fd,
+            };
+
+            requestBackend(requestUploadFile)
+              .then(() => {
+                toast.success("Upload feito com sucesso.");
+              })
+              .catch(() => {
+                toast.error("Erro ao realizar o upload do(s) arquivo(s).");
+              });
+          });
+        }
+
         toast.success(
           `Treinamento ${isEditing ? "atualizado" : "registrado"} com sucesso.`
         );
         navigate("/sgc/treinamento");
       })
       .catch((err) => {
-        console.log(err);
         toast.error("Erro ao registrar o treinamento.");
       });
   };
@@ -414,6 +473,7 @@ const TreinamentoForm = () => {
                 className={`form-control`}
                 id="id-treinamento"
                 placeholder="ID do treinamento"
+                {...register("id")}
                 disabled
               />
               <label htmlFor="id-treinamento">ID do curso</label>
@@ -600,36 +660,38 @@ const TreinamentoForm = () => {
               {turmaFields.map((field, index) => (
                 <div key={field.nome}>
                   <h6>Turma</h6>
-                  <div className="treinamento-input-group form-floating">
-                    <input
-                      className={`form-control ${
-                        errors.turmas?.[index]?.nome ? "is-invalid" : ""
-                      }`}
-                      {...register(`turmas.${index}.nome`, {
-                        required: "Nome da turma obrigatório",
-                      })}
-                      placeholder="Nome da turma"
-                    />
-                    <label>Nome da turma</label>
+                  <div className="turma-row">
+                    <div className="input-turma-group form-floating">
+                      <input
+                        className={`form-control ${
+                          errors.turmas?.[index]?.nome ? "is-invalid" : ""
+                        }`}
+                        {...register(`turmas.${index}.nome`, {
+                          required: "Nome da turma obrigatório",
+                        })}
+                        placeholder="Nome da turma"
+                      />
+                      <label>Nome da turma</label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (turmaFields.length > 1) {
+                          removeTurma(index);
+                        }
+                      }}
+                      disabled={turmaFields.length <= 1}
+                      className="round-button delete-button"
+                    >
+                      <i className="bi bi-x-lg" />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (turmaFields.length > 1) {
-                        removeTurma(index);
-                      }
-                    }}
-                    disabled={turmaFields.length <= 1}
-                    className="round-button delete-button"
-                  >
-                    <i className="bi bi-x-lg" />
-                  </button>
                 </div>
               ))}
               <button
                 type="button"
                 onClick={() => appendTurma({ nome: "" })}
-                className="round-button create-button add-instrutor-button"
+                className="round-button create-button add-turma-button"
               >
                 <i className="bi bi-plus-lg" />
               </button>
@@ -1051,6 +1113,60 @@ const TreinamentoForm = () => {
                 {errors.logisticaTreinamento?.message}
               </div>
             </div>
+            {/* Logistica de treinamento (arquivos) */}
+            <div className="treinamento-input-group input-group">
+              <label className="input-group-text" htmlFor="material-didatico">
+                Logística de treinamento
+                <span className="campo-obrigatorio">*</span>
+              </label>
+              <input
+                type="file"
+                className={`form-control ${
+                  errors.logisticaTreinamentos ? "is-invalid" : ""
+                }`}
+                id="material-didatico"
+                {...register("logisticaTreinamentos", {
+                  required:
+                    logisticaFiles.length === 0 ? "Campo obrigatório" : false,
+                })}
+                accept="application/pdf"
+                multiple
+              />
+              <div className="invalid-feedback d-block">
+                {errors.logisticaTreinamentos?.message}
+              </div>
+              {logisticaFiles.length > 0 && (
+                <ul className="lista-arquivos">
+                  {logisticaFiles.map((file, index) => (
+                    <li>
+                      <span>{file.fileName}</span>
+                      <button
+                        type="button"
+                        className="round-button submit-button"
+                        onClick={() =>
+                          handleViewFile(
+                            "logisticaTreinamento",
+                            file.id,
+                            file.fileName
+                          )
+                        }
+                      >
+                        <i className="bi bi-eye" />
+                      </button>
+                      <button
+                        type="button"
+                        className="round-button delete-button"
+                        onClick={() =>
+                          handleFileDelete("logisticaTreinamento", file.id)
+                        }
+                      >
+                        <i className="bi bi-x-lg" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             {/* Material didático */}
             <div className="treinamento-input-group input-group">
               <label className="input-group-text" htmlFor="material-didatico">
@@ -1073,21 +1189,29 @@ const TreinamentoForm = () => {
                 {errors.materialDidatico?.message}
               </div>
               {materialFiles.length > 0 && (
-                <ul>
+                <ul className="lista-arquivos">
                   {materialFiles.map((file, index) => (
                     <li>
                       <span>{file.fileName}</span>
                       <button
                         type="button"
                         className="round-button submit-button"
-                        onClick={() => handleViewFile(file.id, file.fileName)}
+                        onClick={() =>
+                          handleViewFile(
+                            "materialDidatico",
+                            file.id,
+                            file.fileName
+                          )
+                        }
                       >
                         <i className="bi bi-eye" />
                       </button>
                       <button
                         type="button"
                         className="round-button delete-button"
-                        onClick={() => handleFileDelete(file.id)}
+                        onClick={() =>
+                          handleFileDelete("materialDidatico", file.id)
+                        }
                       >
                         <i className="bi bi-x-lg" />
                       </button>
@@ -1221,7 +1345,7 @@ const TreinamentoForm = () => {
               {instrutorFields.map((field, index) => (
                 <div key={field.email}>
                   <h6>Instrutor {index + 1}</h6>
-                  <div className="treinamento-input-group form-floating">
+                  <div className="input-instrutor-group form-floating">
                     <input
                       className={`form-control ${
                         errors.instrutores?.[index]?.nome ? "is-invalid" : ""
@@ -1233,7 +1357,7 @@ const TreinamentoForm = () => {
                     />
                     <label>Nome</label>
                   </div>
-                  <div className="treinamento-input-group form-floating">
+                  <div className="input-instrutor-group form-floating">
                     <input
                       type="email"
                       className={`form-control ${
@@ -1246,7 +1370,7 @@ const TreinamentoForm = () => {
                     />
                     <label>Email</label>
                   </div>
-                  <div className="treinamento-input-group form-floating">
+                  <div className="input-instrutor-group form-floating">
                     <input
                       className={`form-control ${
                         errors.instrutores?.[index]?.contato ? "is-invalid" : ""

@@ -47,6 +47,39 @@
   left: 70px;
 }
 
+.turma-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.turma-row button {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.input-turma-group,
+.input-instrutor-group {
+  margin: 5px 0;
+}
+
+.input-turma-group {
+  width: calc(100% - 75px);
+}
+
+.lista-arquivos {
+  margin: 10px 0 0 0;
+}
+
+.lista-arquivos span {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.lista-arquivos button {
+  margin: 0 5px;
+}
+
 @media (min-width: 768px) {
   .treinamento-input-group {
     font-size: 15px;

@@ -1,0 +1,14 @@
+.nota-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nota-group .form-control {
+  width: calc(100% - 150px);
+}
+
+.nota-check {
+  width: 120px;
+  margin-right: 5px;
+}

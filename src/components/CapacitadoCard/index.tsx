@@ -1,17 +1,17 @@
-import { TreinamentoType } from "types/treinamento";
+import { CapacitadoType } from "types/capacitado";
 import "./styles.css";
+import { formatarData } from "utils/functions";
 import { Link } from "react-router-dom";
-import { formatarData, formatarStatus, formatarTipo } from "utils/functions";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
 
 interface Props {
-  element: TreinamentoType;
+  element: CapacitadoType;
   onLoad: () => void;
 }
 
-const TreinamentoCard = ({ element, onLoad }: Props) => {
+const CapacitadoCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(
       "Você tem certeza que deseja deletar esse elemento?"
@@ -19,7 +19,7 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
 
     if (confirm) {
       const requestParams: AxiosRequestConfig = {
-        url: `/treinamentos/deletar/${id}`,
+        url: `/capacitados/deletar/${id}`,
         method: "DELETE",
         withCredentials: true,
       };
@@ -40,66 +40,47 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
   return (
     <tr className="treinamento-card-container">
       <td>
-        <div className="treinamento-card-content">{element.treinamento}</div>
-      </td>
-      <td>
-        <div className="treinament-card-content">{element.material}</div>
-      </td>
-      <td>
-        <div className="treinament-card-content">{element.om}</div>
-      </td>
-      <td>
-        <div className="treinament-card-content">{element.brigada}</div>
+        <div className="treinamento-card-content">{element.nomeCompleto}</div>
       </td>
       <td>
         <div className="treinament-card-content">
-          {formatarTipo(element.tipo)}
+          {element.treinamento.treinamento}
         </div>
       </td>
       <td>
         <div className="treinament-card-content">
-          {element.executor === 1 ? "EB" : "Empresa"}
+          {element.treinamento.brigada}
         </div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.instituicao}</div>
+        <div className="treinament-card-content">{element.treinamento.om}</div>
+      </td>
+      <td>
+        <div className="treinament-card-content">{element.turma}</div>
       </td>
       <td>
         <div className="treinament-card-content">
-          {formatarStatus(element.status)}
-        </div>
-      </td>
-      <td>
-        <div className="treinament-card-content">{element.vagas}</div>
-      </td>
-      <td>
-        <div className="treinament-card-content">{element.subsistema}</div>
-      </td>
-      <td>
-        <div className="treinament-card-content">
-          {element.sad.toUpperCase()}
+          {formatarData(element.treinamento.dataInicio)}
         </div>
       </td>
       <td>
         <div className="treinament-card-content">
-          {formatarData(element.dataInicio)}
+          {formatarData(element.treinamento.dataFim)}
         </div>
       </td>
       <td>
         <div className="treinament-card-content">
-          {formatarData(element.dataInicio)}
+          {element.treinamento.modalidade}
         </div>
       </td>
       <td>
         <div className="treinamento-card-buttons">
-          <Link to={`/sgc/treinamento/visualizar/${element.id}`}>
+          <Link to={`/sgc/capacitado/visualizar/${element.id}`}>
             <button className="act-button submit-button">
               <i className="bi bi-file-earmark-text" />
             </button>
           </Link>
-          <Link
-            to={`/sgc/treinamento/${element.id}`}
-          >
+          <Link to={`/sgc/capacitado/${element.id}`}>
             <button className="act-button edit-button" type="button">
               <i className="bi bi-pencil" />
             </button>
@@ -117,4 +98,4 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
   );
 };
 
-export default TreinamentoCard;
+export default CapacitadoCard;

@@ -1,5 +1,6 @@
 import Navbar from "components/Navbar";
 import Auth from "pages/Auth";
+import Capacitado from "pages/Capacitado";
 import Home from "pages/Home";
 import Treinamento from "pages/Treinamento";
 import PrivateRoute from "PrivateRoute";
@@ -42,6 +43,19 @@ const Routes = () => {
                 ]}
               >
                 <Treinamento />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/capacitado/*"
+            element={
+              <PrivateRoute
+                roles={[
+                  { id: 1, autorizacao: "PERFIL_ADMIN" },
+                  { id: 2, autorizacao: "PERFIL_USUARIO" },
+                ]}
+              >
+                <Capacitado />
               </PrivateRoute>
             }
           />

@@ -1,4 +1,5 @@
 import { Instrutor } from "./instrutor";
+import { LogisticasTreinamento } from "./logisticasTreinamento";
 import { MaterialDidatico } from "./materialDidatico";
 import { Turma } from "./turma";
 
@@ -9,7 +10,7 @@ export type TreinamentoType = {
   treinamento: string;
   tipo: number;
   subsistema: string;
-  modalidade: number;
+  modalidade: number | string;
   brigada: string;
   om: string;
   turmas: Turma[];
@@ -32,4 +33,5 @@ export type TreinamentoType = {
   preRequisitos: string;
   instrutores: Instrutor[];
   materiaisDidaticos: MaterialDidatico[];
+  logisticaTreinamentos: LogisticasTreinamento[];
 };

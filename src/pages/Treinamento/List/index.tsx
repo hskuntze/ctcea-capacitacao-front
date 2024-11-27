@@ -75,7 +75,7 @@ const TreinamentoList = () => {
         dataFim: formatarData(t.dataFim),
         status: formatarStatus(t.status),
         tipo: formatarTipo(t.tipo),
-        modalidade: formatarModalidade(t.modalidade),
+        modalidade: formatarModalidade(Number(t.modalidade)),
         executor: t.executor === 1 ? "EB" : "Empresa",
       }));
 

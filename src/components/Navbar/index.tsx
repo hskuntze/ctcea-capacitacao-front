@@ -53,7 +53,9 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <button className="nav-link">Capacitados</button>
+              <Link className="nav-link" to="/sgc/capacitado">
+                Capacitados
+              </Link>
             </li>
             <li className="nav-item">
               <button className="nav-link">Pesquisa de satisfação</button>

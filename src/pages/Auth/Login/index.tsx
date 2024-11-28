@@ -6,11 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 import { getTokenData } from "utils/auth";
 import { AuthContext } from "utils/contexts/AuthContext";
-import { UserContext } from "utils/contexts/UserContext";
 import { requestBackendLogin } from "utils/requests";
 import { saveAuthData } from "utils/storage";
 
 import LogotipoSGC from "assets/images/logotipo-sgc.png";
+import Loader from "components/Loader";
+import { toast } from "react-toastify";
 
 type FormData = {
   username: string;
@@ -19,7 +20,6 @@ type FormData = {
 
 const Login = () => {
   const { setAuthContextData } = useContext(AuthContext);
-  const { setUserContextData } = useContext(UserContext);
 
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +36,6 @@ const Login = () => {
 
     requestBackendLogin(formData)
       .then((res) => {
-        setLoading(false);
         saveAuthData(res.data);
         setAuthContextData({
           authenticated: true,
@@ -46,8 +45,10 @@ const Login = () => {
         navigate("/sgc");
       })
       .catch((err) => {
+        toast.error("Não foi possível realizar o login.");
+      })
+      .finally(() => {
         setLoading(false);
-        console.log(err);
       });
   };
 
@@ -55,10 +56,12 @@ const Login = () => {
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="login-form-logo">
-          <img src={LogotipoSGC} alt="Logotipo do Sistema Gerenciador de Capacitação" />
+          <img
+            src={LogotipoSGC}
+            alt="Logotipo do Sistema Gerenciador de Capacitação"
+          />
         </div>
         <div className="login-form-content">
-          <span>Sistema de Gestão de Capacitação</span>
           <div className="login-input-group">
             <input
               type="text"
@@ -87,9 +90,13 @@ const Login = () => {
               {errors.password?.message}
             </div>
           </div>
-          <button type="submit" className="button submit-button">
-            Login
-          </button>
+          {loading ? (
+            <Loader />
+          ) : (
+            <button type="submit" className="button submit-button">
+              Login
+            </button>
+          )}
         </div>
       </form>
     </div>

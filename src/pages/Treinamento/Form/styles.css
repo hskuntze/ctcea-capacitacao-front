@@ -1,0 +1,121 @@
+.treinamento-container {
+  width: calc(100% - 20px);
+  margin: 20px auto;
+}
+
+.treinamento-input-group {
+  font-size: 15px;
+  margin: 12px 10px;
+  position: relative;
+}
+
+.treinamento-input-group input,
+.treinamento-input-group select {
+  font-size: 15px;
+}
+
+.treinamento-content {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 1px 0 10px 7px #ccc;
+  margin-bottom: 10px;
+  width: 100%;
+  flex: 1;
+}
+
+.treinamento-form {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+.input-inside-label {
+  position: absolute;
+  top: 17px;
+  left: 13px;
+}
+
+.input-element-treinamento {
+  padding-left: 102px !important;
+  padding-bottom: 30px !important;
+}
+
+.add-instrutor-button {
+  position: absolute;
+  bottom: 0;
+  left: 70px;
+}
+
+.turma-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.turma-row button {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.input-turma-group,
+.input-instrutor-group {
+  margin: 5px 0;
+}
+
+.input-turma-group {
+  width: calc(100% - 75px);
+}
+
+.lista-arquivos {
+  margin: 10px 0 0 0;
+}
+
+.lista-arquivos span {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.lista-arquivos button {
+  margin: 0 5px;
+}
+
+@media (min-width: 768px) {
+  .treinamento-input-group {
+    font-size: 15px;
+    margin: 12px 0px;
+  }
+
+  .treinamento-content {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .treinamento-left {
+    width: calc(50% - 15px);
+    margin: 0 auto;
+  }
+
+  .treinamento-right {
+    width: calc(50% - 15px);
+    margin: 0 auto;
+  }
+
+  .input-element-treinamento {
+    padding-bottom: 28px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .treinamento-container {
+    width: calc(100% - 40px);
+    margin: 40px auto;
+  }
+  .treinamento-left {
+    width: calc(50% - 45px);
+  }
+
+  .treinamento-right {
+    width: calc(50% - 45px);
+  }
+}

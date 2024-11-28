@@ -10,6 +10,7 @@ import { CapacitadoType } from "types/capacitado";
 import { formatarData, formatarModalidade } from "utils/functions";
 import { toast } from "react-toastify";
 import { OM } from "types/om";
+import { Autocomplete, TextField } from "@mui/material";
 
 type FormData = {
   tipo: string;
@@ -27,11 +28,11 @@ type FormData = {
   notaTeorica: number;
   turma: string;
   certificado: string;
-  tipoCertificado: string;
+  tipoCertificado: string[];
   numeroBi: string;
   observacoesAvaliacaoPratica: string;
   observacoesAvaliacaoTeorica: string;
-  treinamento: TreinamentoType;
+  treinamento: TreinamentoType | null;
   posto: number;
   funcao: string;
 };
@@ -43,7 +44,11 @@ const CapacitadoForm = () => {
     handleSubmit,
     register,
     setValue,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      tipoCertificado: [],
+    },
+  });
 
   const [isEditing, setIsEditing] = useState(false);
   const [isCivil, setIsCivil] = useState<boolean | null>(null);
@@ -60,6 +65,9 @@ const CapacitadoForm = () => {
   const [exibeTipoCertificado, setExibeTipoCertificado] = useState(false);
 
   const [treinamento, setTreinamento] = useState<TreinamentoType>();
+  const [todosTreinamentos, setTodosTreinamentos] = useState<TreinamentoType[]>(
+    []
+  );
 
   const urlParams = useParams();
 
@@ -68,7 +76,8 @@ const CapacitadoForm = () => {
     let avaliacaoPratica = formData.avaliacaoPratica === "1" ? true : false;
     let certificado = formData.certificado === "1" ? true : false;
 
-    console.log(formData.posto);
+    let exigeNotaTeorica = formData.exigeNotaTeorica === null ? true : formData.exigeNotaTeorica;
+    let exigeNotaPratica = formData.exigeNotaPratica === null ? true : formData.exigeNotaPratica;
 
     const requestParams: AxiosRequestConfig = {
       url: `${isEditing ? `/capacitados/${urlParams.id}` : "/capacitados"}`,
@@ -79,8 +88,10 @@ const CapacitadoForm = () => {
         avaliacaoPratica,
         avaliacaoTeorica,
         certificado,
+        exigeNotaPratica,
+        exigeNotaTeorica,
         treinamento: {
-          id: formData.treinamento.id,
+          id: formData.treinamento ? formData.treinamento.id : null,
         },
         posto: {
           id: formData.posto,
@@ -90,10 +101,11 @@ const CapacitadoForm = () => {
 
     requestBackend(requestParams)
       .then((res) => {
-        console.log(res.data);
+        toast.success(`Sucesso ao ${isEditing ? "atualizar" : "registrar"}.`);
       })
       .catch((err) => {
         console.log(err);
+        toast.error(`Erro ao ${isEditing ? "atualizar" : "registrar"}.`);
       });
   };
 
@@ -101,6 +113,37 @@ const CapacitadoForm = () => {
     let isCivil = e.currentTarget.value === "1" ? true : false;
     setIsCivil(isCivil);
   };
+
+  const handleSelectTreinamento = (value: TreinamentoType) => {
+    setValue("treinamento", value);
+    setValue("treinamento.id", value.id);
+    setValue("treinamento.brigada", value.brigada);
+    setValue("treinamento.dataInicio", formatarData(value.dataInicio));
+    setValue("treinamento.dataFim", formatarData(value.dataFim));
+    setValue(
+      "treinamento.modalidade",
+      formatarModalidade(Number(value.modalidade))
+    );
+    setValue("treinamento.om", value.om);
+
+    setTreinamento(value);
+  };
+
+  const loadTreinamentos = useCallback(() => {
+    const requestParams: AxiosRequestConfig = {
+      url: "/treinamentos",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestParams)
+      .then((res) => {
+        setTodosTreinamentos(res.data as TreinamentoType[]);
+      })
+      .catch(() => {
+        toast.error("Erro ao tentar carregar todos os treinamentos");
+      });
+  }, []);
 
   const loadPostos = useCallback(() => {
     const requestParams: AxiosRequestConfig = {
@@ -163,6 +206,8 @@ const CapacitadoForm = () => {
         .then((res) => {
           let data = res.data as CapacitadoType;
 
+          console.log(data);
+
           setValue(
             "avaliacaoPratica",
             data.avaliacaoPratica === true ? "1" : "0"
@@ -179,7 +224,13 @@ const CapacitadoForm = () => {
           setExibeTipoCertificado(data.certificado);
           setValue("email", data.email);
           setValue("exigeNotaPratica", data.exigeNotaPratica);
+          setExigeNotaPratica(
+            data.exigeNotaPratica !== null ? data.exigeNotaPratica : false
+          );
           setValue("exigeNotaTeorica", data.exigeNotaTeorica);
+          setExigeNotaTeorica(
+            data.exigeNotaTeorica !== null ? data.exigeNotaTeorica : false
+          );
           setValue("instituicao", data.instituicao);
           setValue("nomeCompleto", data.nomeCompleto);
           setValue("nomeGuerra", data.nomeGuerra);
@@ -190,7 +241,9 @@ const CapacitadoForm = () => {
           setValue("funcao", data.funcao);
           setValue("tipo", String(data.tipo));
           setIsCivil(data.tipo === 1 ? true : false);
-          setValue("posto", data.posto.id);
+          if (data.posto !== null) {
+            setValue("posto", data.posto.id);
+          }
           setValue(
             "observacoesAvaliacaoPratica",
             data.observacoesAvaliacaoPratica
@@ -201,21 +254,22 @@ const CapacitadoForm = () => {
           );
           setValue("tipoCertificado", data.tipoCertificado);
 
-          const requestTreinamentoParams: AxiosRequestConfig = {
-            url: `/treinamentos/${urlParams.id}`,
-            withCredentials: true,
-            method: "GET",
-          };
-
-          requestBackend(requestTreinamentoParams).then((res) => {
-            let data = res.data as TreinamentoType;
-            data.dataInicio = formatarData(data.dataInicio);
-            data.dataFim = formatarData(data.dataFim);
-            data.modalidade = formatarModalidade(Number(data.modalidade));
-
-            setValue("treinamento", data);
-            setTreinamento(data);
-          });
+          let treinamento = data.treinamento as TreinamentoType;
+          setValue("treinamento", treinamento);
+          setValue("treinamento.treinamento", treinamento.treinamento);
+          setValue("treinamento.id", treinamento.id);
+          setValue("treinamento.brigada", treinamento.brigada);
+          setValue("treinamento.om", treinamento.om);
+          setValue(
+            "treinamento.dataInicio",
+            formatarData(treinamento.dataInicio)
+          );
+          setValue("treinamento.dataFim", formatarData(treinamento.dataFim));
+          setValue(
+            "treinamento.modalidade",
+            formatarModalidade(Number(treinamento.modalidade))
+          );
+          setTreinamento(treinamento);
         })
         .catch(() => {});
     }
@@ -232,7 +286,11 @@ const CapacitadoForm = () => {
     loadPostos();
     loadOms();
     loadBdas();
-  }, [loadInfo, loadPostos, loadOms, loadBdas]);
+
+    if (!isEditing) {
+      loadTreinamentos();
+    }
+  }, [loadInfo, loadPostos, loadOms, loadBdas, isEditing, loadTreinamentos]);
 
   return (
     <div className="treinamento-container">
@@ -241,15 +299,61 @@ const CapacitadoForm = () => {
           <div className="treinamento-left">
             <h6 className="ms-2 mt-3">DADOS DO TREINAMENTO</h6>
             <div className="treinamento-input-group form-floating">
-              <input
-                type="text"
-                className={`form-control`}
-                id="treinamento"
-                placeholder="Treinamento"
-                {...register("treinamento.treinamento")}
-                disabled
+              <Controller
+                name="treinamento"
+                control={control}
+                rules={{
+                  required: "Campo obrigatório",
+                }}
+                render={({ field, fieldState }) => (
+                  <Autocomplete
+                    disablePortal
+                    options={todosTreinamentos}
+                    getOptionLabel={(opt) => opt.treinamento}
+                    classes={{
+                      inputRoot: `form-control input-element-root ${
+                        errors.treinamento ? "invalido" : ""
+                      }`,
+                      input: "input-element-inside",
+                      root: "autocomplete-root",
+                      inputFocused: "input-element-focused",
+                    }}
+                    {...register("treinamento")}
+                    value={field.value ? field.value : null}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        slotProps={{
+                          htmlInput: {
+                            ...params.inputProps,
+                            id: "input-treinamento",
+                          },
+                        }}
+                        label="Selecione um treinamento"
+                        classes={{
+                          root: "text-field",
+                        }}
+                      />
+                    )}
+                    onChange={(event, value) => {
+                      if (value) {
+                        handleSelectTreinamento(value);
+                      } else {
+                        setValue("treinamento", null);
+                        setValue("treinamento.id", null);
+                        setValue("treinamento.dataInicio", "");
+                        setValue("treinamento.dataFim", "");
+                        setValue("treinamento.brigada", "");
+                        setValue("treinamento.om", "");
+                        setValue("treinamento.modalidade", "");
+                      }
+                    }}
+                  />
+                )}
               />
-              <label htmlFor="treinamento">Treinamento</label>
+              <div className="invalid-feedback d-block">
+                {errors.treinamento?.message}
+              </div>
             </div>
             <div className="treinamento-input-group form-floating">
               <input
@@ -379,7 +483,7 @@ const CapacitadoForm = () => {
                 {/* Contato */}
                 <div className="treinamento-input-group form-floating">
                   <input
-                    type="text"
+                    type="email"
                     className={`form-control ${
                       errors.email ? "is-invalid" : ""
                     }`}
@@ -626,14 +730,19 @@ const CapacitadoForm = () => {
               <div className="treinamento-input-group form-floating">
                 <div className="nota-group form-floating">
                   <input
-                    type="number"
+                    type="text"
                     className={`form-control ${
                       errors.notaTeorica ? "is-invalid" : ""
                     }`}
                     id="nota-teorica"
                     placeholder="Nota teórica"
                     {...register("notaTeorica", {
-                      required: "Campo obrigatório",
+                      required: exigeNotaTeorica ? false : "Campo obrigatório",
+                      pattern: {
+                        value: /^\d+([.,]\d{1,2})?$/,
+                        message:
+                          "Valor inválido. Use vírgula ou ponto com até 2 casas decimais.",
+                      },
                     })}
                     disabled={exigeNotaTeorica}
                   />
@@ -667,14 +776,11 @@ const CapacitadoForm = () => {
                 }`}
                 id="obs-avaliacao-teorica"
                 placeholder="Observações da Avaliação Teórica"
-                {...register("observacoesAvaliacaoTeorica", {
-                  required: "Campo obrigatório",
-                })}
+                {...register("observacoesAvaliacaoTeorica")}
                 rows={10}
               />
               <label htmlFor="obs-avaliacao-teorica">
                 Observações da Avaliação Teórica
-                <span className="campo-obrigatorio">*</span>
               </label>
               <div className="invalid-feedback d-block">
                 {errors.observacoesAvaliacaoTeorica?.message}
@@ -726,14 +832,19 @@ const CapacitadoForm = () => {
               <div className="treinamento-input-group form-floating">
                 <div className="nota-group form-floating">
                   <input
-                    type="number"
+                    type="text"
                     className={`form-control ${
                       errors.notaPratica ? "is-invalid" : ""
                     }`}
                     id="nota-pratica"
                     placeholder="Nota teórica"
                     {...register("notaPratica", {
-                      required: "Campo obrigatório",
+                      required: exigeNotaPratica ? false : "Campo obrigatório",
+                      pattern: {
+                        value: /^\d+([.,]\d{1,2})?$/,
+                        message:
+                          "Valor inválido. Use vírgula ou ponto com até 2 casas decimais.",
+                      },
                     })}
                     disabled={exigeNotaPratica}
                   />
@@ -767,14 +878,11 @@ const CapacitadoForm = () => {
                 }`}
                 id="obs-avaliacao-pratica"
                 placeholder="Observações da Avaliação Prática"
-                {...register("observacoesAvaliacaoPratica", {
-                  required: "Campo obrigatório",
-                })}
+                {...register("observacoesAvaliacaoPratica")}
                 rows={10}
               />
               <label htmlFor="obs-avaliacao-pratica">
                 Observações da Avaliação Prática
-                <span className="campo-obrigatorio">*</span>
               </label>
               <div className="invalid-feedback d-block">
                 {errors.observacoesAvaliacaoPratica?.message}
@@ -829,45 +937,66 @@ const CapacitadoForm = () => {
                   Tipo do certificado
                 </label>
                 <div className="form-check nota-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="tipo-certificado-impresso"
-                    {...register("tipoCertificado", {
-                      required: "Campo obrigatório",
-                    })}
-                    value={"impresso"}
+                  <Controller
+                    name="tipoCertificado"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <input
+                          className="form-check-input"
+                          checked={field.value.includes("impresso")}
+                          type="checkbox"
+                          id="tipo-certificado-impresso"
+                          {...register("tipoCertificado", {
+                            required: "Campo obrigatório",
+                          })}
+                          value={"impresso"}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="tipo-certificado-impresso"
+                        >
+                          Impresso
+                        </label>
+                      </>
+                    )}
                   />
-                  <label
-                    className="form-check-label"
-                    htmlFor="tipo-certificado-impresso"
-                  >
-                    Impresso
-                  </label>
                 </div>
                 <div className="form-check nota-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="tipo-certificado-digital"
-                    {...register("tipoCertificado", {
-                      required: "Campo obrigatório",
-                    })}
-                    value={"digital"}
+                  <Controller
+                    name="tipoCertificado"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <input
+                          className="form-check-input"
+                          checked={field.value.includes("digital")}
+                          type="checkbox"
+                          id="tipo-certificado-digital"
+                          {...register("tipoCertificado", {
+                            required: "Campo obrigatório",
+                          })}
+                          value={"digital"}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="tipo-certificado-digital"
+                        >
+                          Digital
+                        </label>
+                      </>
+                    )}
                   />
-                  <label
-                    className="form-check-label"
-                    htmlFor="tipo-certificado-digital"
-                  >
-                    Digital
-                  </label>
+                </div>
+                <div className="invalid-feedback d-block">
+                  {errors.tipoCertificado?.message}
                 </div>
               </div>
             )}
             <h6 className="ms-2 mt-3">BOLETIM INTERNO (BI)</h6>
             <div className="treinamento-input-group form-floating">
               <input
-                type="number"
+                type="text"
                 className={`form-control ${
                   errors.numeroBi ? "is-invalid" : ""
                 }`}

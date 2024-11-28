@@ -39,13 +39,13 @@ const TreinamentoInspect = () => {
   }, [loadInfo]);
 
   return (
-    <div className="treinamento-inspect-container">
+    <div className="inspect-container">
       {loading ? (
         <div className="loading-div">
           <Loader />
         </div>
       ) : (
-        <div className="treinamento-inspect-content">
+        <div className="inspect-content">
           <h5>{treinamento?.treinamento}</h5>
           <span>
             <b>SAD:</b> {treinamento?.sad.toUpperCase()}

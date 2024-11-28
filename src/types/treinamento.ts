@@ -4,7 +4,7 @@ import { MaterialDidatico } from "./materialDidatico";
 import { Turma } from "./turma";
 
 export type TreinamentoType = {
-  id: number;
+  id: number | null;
   sad: string;
   material: string;
   treinamento: string;

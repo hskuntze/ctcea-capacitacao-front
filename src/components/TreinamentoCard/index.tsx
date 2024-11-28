@@ -97,9 +97,7 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
               <i className="bi bi-file-earmark-text" />
             </button>
           </Link>
-          <Link
-            to={`/sgc/treinamento/${element.id}`}
-          >
+          <Link to={`/sgc/treinamento/${element.id}`}>
             <button className="act-button edit-button" type="button">
               <i className="bi bi-pencil" />
             </button>
@@ -107,7 +105,11 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
           <button
             className="act-button delete-button"
             type="button"
-            onClick={() => deleteElement(element.id)}
+            onClick={() => {
+              if (element.id) {
+                deleteElement(element.id);
+              }
+            }}
           >
             <i className="bi bi-trash" />
           </button>

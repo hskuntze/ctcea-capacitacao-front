@@ -21,7 +21,7 @@ export type CapacitadoType = {
   notaTeorica: number;
   turma: string;
   certificado: boolean;
-  tipoCertificado: string;
+  tipoCertificado: string[];
   numeroBi: string;
   observacoesAvaliacaoPratica: string;
   observacoesAvaliacaoTeorica: string;

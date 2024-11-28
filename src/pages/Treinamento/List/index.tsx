@@ -155,7 +155,7 @@ const TreinamentoList = () => {
 
   return (
     <>
-      <div className="treinamento-list-buttons">
+      <div className="top-list-buttons">
         <Link to="/sgc/treinamento/inserir">
           <button type="button" className="button create-button">
             Novo treinamento
@@ -176,14 +176,14 @@ const TreinamentoList = () => {
           <i className="bi bi-file-earmark-excel" />
         </button>
       </div>
-      <div className="treinamento-list-container">
+      <div className="list-container">
         {loading ? (
           <div className="loader-div">
             <Loader height="100" width="100" />
           </div>
         ) : (
-          <table className="treinamento-table-container">
-            <thead className="treinamento-table-head">
+          <table className="table-container">
+            <thead className="table-head">
               <tr>
                 <th scope="col">Treinamento</th>
                 <th scope="col">Material</th>
@@ -201,7 +201,7 @@ const TreinamentoList = () => {
                 <th scope="col">Ações</th>
               </tr>
             </thead>
-            <tbody className="treinamento-table-body">
+            <tbody className="table-body">
               {paginatedData.length > 0 ? (
                 paginatedData.map((t) => (
                   <TreinamentoCard onLoad={loadInfo} key={t.id} element={t} />
@@ -220,7 +220,7 @@ const TreinamentoList = () => {
               <tr>
                 <td>
                   <TablePagination
-                    className="treinamento-table-pagination-container"
+                    className="table-pagination-container"
                     component="div"
                     count={treinamentos ? treinamentos.length : 0}
                     page={page}

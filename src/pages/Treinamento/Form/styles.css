@@ -6,6 +6,7 @@
 .treinamento-input-group {
   font-size: 15px;
   margin: 12px 10px;
+  position: relative;
 }
 
 .treinamento-input-group input,
@@ -29,6 +30,56 @@
   align-items: end;
 }
 
+.input-inside-label {
+  position: absolute;
+  top: 17px;
+  left: 13px;
+}
+
+.input-element-treinamento {
+  padding-left: 102px !important;
+  padding-bottom: 30px !important;
+}
+
+.add-instrutor-button {
+  position: absolute;
+  bottom: 0;
+  left: 70px;
+}
+
+.turma-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.turma-row button {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.input-turma-group,
+.input-instrutor-group {
+  margin: 5px 0;
+}
+
+.input-turma-group {
+  width: calc(100% - 75px);
+}
+
+.lista-arquivos {
+  margin: 10px 0 0 0;
+}
+
+.lista-arquivos span {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.lista-arquivos button {
+  margin: 0 5px;
+}
+
 @media (min-width: 768px) {
   .treinamento-input-group {
     font-size: 15px;
@@ -48,6 +99,10 @@
   .treinamento-right {
     width: calc(50% - 15px);
     margin: 0 auto;
+  }
+
+  .input-element-treinamento {
+    padding-bottom: 28px !important;
   }
 }
 

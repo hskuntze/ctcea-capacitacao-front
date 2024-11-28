@@ -100,11 +100,11 @@
 
 @media (min-width: 992px) {
   .navbar-container {
-    min-height: 120px;
+    min-height: 140px;
   }
 
   .navbar-inner-top-element {
-    height: 70px;
+    height: 90px;
   }
 
   .navbar-bottom-element {
@@ -119,5 +119,15 @@
 
   .navbar-menu li {
     padding: 3px 15px;
+  }
+
+  .navbar-logo {
+    height: 70px;
+    width: 178px;
+  }
+
+  .navbar-title {
+    font-size: 20px;
+    width: 390px;
   }
 }

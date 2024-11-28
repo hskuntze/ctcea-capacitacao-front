@@ -1,8 +1,22 @@
 import { Link } from "react-router-dom";
 import "./styles.css";
 import LogotipoSISFRON from "assets/images/corujinhaLoginEb.png";
+import { useContext } from "react";
+import { AuthContext } from "utils/contexts/AuthContext";
+import { removeAuthData, removeUserData } from "utils/storage";
 
 const Navbar = () => {
+  const { setAuthContextData } = useContext(AuthContext);
+
+  const logout = () => {
+    removeAuthData();
+    removeUserData();
+
+    setAuthContextData({
+      authenticated: false,
+    });
+  };
+
   return (
     <nav className="navbar-container navbar-expand-md">
       <div className="navbar-top-element">
@@ -39,7 +53,9 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <button className="nav-link">Capacitados</button>
+              <Link className="nav-link" to="/sgc/capacitado">
+                Capacitados
+              </Link>
             </li>
             <li className="nav-item">
               <button className="nav-link">Pesquisa de satisfação</button>
@@ -49,6 +65,11 @@ const Navbar = () => {
             </li>
             <li className="nav-item">
               <button className="nav-link">Controle de usuário</button>
+            </li>
+            <li className="nav-item">
+              <button onClick={logout} className="nav-link">
+                Sair <i className="bi bi-door-open" />
+              </button>
             </li>
           </ul>
         </div>

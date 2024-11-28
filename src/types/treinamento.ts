@@ -1,14 +1,19 @@
+import { Instrutor } from "./instrutor";
+import { LogisticasTreinamento } from "./logisticasTreinamento";
+import { MaterialDidatico } from "./materialDidatico";
+import { Turma } from "./turma";
+
 export type TreinamentoType = {
-  id: number;
+  id: number | null;
   sad: string;
   material: string;
   treinamento: string;
   tipo: number;
   subsistema: string;
-  modalidade: number;
+  modalidade: number | string;
   brigada: string;
   om: string;
-  grupo: number;
+  turmas: Turma[];
   executor: number;
   instituicao: string;
   dataInicio: string;
@@ -17,15 +22,16 @@ export type TreinamentoType = {
   status: number;
   avaliacaoPratica: boolean;
   avaliacaoTeorica: boolean;
-  nomeInstrutores: string;
-  contatoInstrutores: string;
   certificado: boolean;
   logisticaTreinamento: string;
   nivelamento: boolean;
+  descNivelamento: string;
   cargaHoraria: number;
-  publicoAlvo: boolean;
+  publicoAlvo: number;
   descricaoAtividade: string;
-  materialDidatico: string;
   observacoes: string;
   preRequisitos: string;
+  instrutores: Instrutor[];
+  materiaisDidaticos: MaterialDidatico[];
+  logisticaTreinamentos: LogisticasTreinamento[];
 };

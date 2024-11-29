@@ -1,3 +1,4 @@
+import Denied from "components/Denied";
 import { Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Perfil } from "types/perfil";
@@ -19,9 +20,9 @@ const PrivateRoute = ({
       return <Navigate replace to="/sgc/login" state={{ from: location }} />;
     }
   
-    // if (isAuthenticated() && !hasRoles) {
-    //   return <Denied />;
-    // }
+    if (isAuthenticated() && !hasRoles) {
+      return <Denied />;
+    }
   
     return children;
   };

@@ -534,7 +534,7 @@ const CapacitadoForm = () => {
                     {errors.funcao?.message}
                   </div>
                 </div>
-                {/* Função */}
+                {/* Turma */}
                 <div className="treinamento-input-group form-floating">
                   <Controller
                     name="turma"

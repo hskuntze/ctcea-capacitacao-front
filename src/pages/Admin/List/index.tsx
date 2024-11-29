@@ -1,16 +1,17 @@
-import "./styles.css";
 import { Link } from "react-router-dom";
+import "./styles.css";
 import { useCallback, useEffect, useState } from "react";
-import Loader from "components/Loader";
-import { CapacitadoType } from "types/capacitado";
+import { User } from "types/user";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
+import Loader from "components/Loader";
+import UsuarioCard from "components/UsuarioCard";
 import { TablePagination } from "@mui/material";
-import CapacitadoCard from "components/CapacitadoCard";
+import { toast } from "react-toastify";
 
-const CapacitadoList = () => {
-  const [capacitados, setCapacitados] = useState<CapacitadoType[]>([]);
+const UsuarioList = () => {
   const [loading, setLoading] = useState(false);
+  const [usuarios, setUsuarios] = useState<User[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -18,17 +19,17 @@ const CapacitadoList = () => {
     setLoading(true);
 
     const requestParams: AxiosRequestConfig = {
-      url: "/capacitados",
+      url: "/usuarios",
       method: "GET",
       withCredentials: true,
     };
 
     requestBackend(requestParams)
       .then((res) => {
-        setCapacitados(res.data as CapacitadoType[]);
+        setUsuarios(res.data as User[]);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao resgatar os usuários.");
       })
       .finally(() => {
         setLoading(false);
@@ -49,8 +50,8 @@ const CapacitadoList = () => {
     setPage(0);
   };
 
-  const paginatedData = capacitados
-    ? capacitados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  const paginatedData = usuarios
+    ? usuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : [];
 
   useEffect(() => {
@@ -60,9 +61,9 @@ const CapacitadoList = () => {
   return (
     <>
       <div className="top-list-buttons">
-        <Link to="/sgc/capacitado/inserir">
+        <Link to="/sgc/usuario/inserir">
           <button type="button" className="button create-button">
-            Novo capacitado
+            Novo usuário
           </button>
         </Link>
         <button
@@ -89,27 +90,24 @@ const CapacitadoList = () => {
           <table className="table-container">
             <thead className="table-head">
               <tr>
-                <th scope="col">Nome do capacitado</th>
-                <th scope="col">Treinamento</th>
-                <th scope="col">Brigada</th>
-                <th scope="col">OM</th>
-                <th scope="col">Turma</th>
-                <th scope="col">Data início</th>
-                <th scope="col">Data fim</th>
-                <th scope="col">Modalidade</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Sobrenome</th>
+                <th scope="col">Identidade</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Perfil</th>
                 <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody className="table-body">
               {paginatedData.length > 0 ? (
                 paginatedData.map((t) => (
-                  <CapacitadoCard onLoad={loadInfo} key={t.id} element={t} />
+                  <UsuarioCard onLoad={loadInfo} key={t.id} element={t} />
                 ))
               ) : (
                 <tr>
                   <td colSpan={9}>
                     <div className="no-elements-on-table">
-                      <span>Não existem capacitados a serem exibidos.</span>
+                      <span>Não existem ocorrências a serem exibidas.</span>
                     </div>
                   </td>
                 </tr>
@@ -121,7 +119,7 @@ const CapacitadoList = () => {
                   <TablePagination
                     className="table-pagination-container"
                     component="div"
-                    count={capacitados ? capacitados.length : 0}
+                    count={usuarios ? usuarios.length : 0}
                     page={page}
                     onPageChange={handlePageChange}
                     rowsPerPage={rowsPerPage}
@@ -147,4 +145,4 @@ const CapacitadoList = () => {
   );
 };
 
-export default CapacitadoList;
+export default UsuarioList;

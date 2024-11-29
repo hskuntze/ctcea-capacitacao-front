@@ -1,16 +1,16 @@
-import "./styles.css";
 import { Link } from "react-router-dom";
+import "./styles.css";
 import { useCallback, useEffect, useState } from "react";
 import Loader from "components/Loader";
-import { CapacitadoType } from "types/capacitado";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
+import { OcorrenciaType } from "types/ocorrencia";
 import { TablePagination } from "@mui/material";
-import CapacitadoCard from "components/CapacitadoCard";
+import OcorrenciaCard from "components/OcorrenciaCard";
 
-const CapacitadoList = () => {
-  const [capacitados, setCapacitados] = useState<CapacitadoType[]>([]);
+const OcorrenciaList = () => {
   const [loading, setLoading] = useState(false);
+  const [ocorrencias, setOcorrencias] = useState<OcorrenciaType[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -18,14 +18,14 @@ const CapacitadoList = () => {
     setLoading(true);
 
     const requestParams: AxiosRequestConfig = {
-      url: "/capacitados",
+      url: "/ocorrencias",
       method: "GET",
       withCredentials: true,
     };
 
     requestBackend(requestParams)
       .then((res) => {
-        setCapacitados(res.data as CapacitadoType[]);
+        setOcorrencias(res.data as OcorrenciaType[]);
       })
       .catch((err) => {
         console.log(err);
@@ -49,8 +49,8 @@ const CapacitadoList = () => {
     setPage(0);
   };
 
-  const paginatedData = capacitados
-    ? capacitados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  const paginatedData = ocorrencias
+    ? ocorrencias.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : [];
 
   useEffect(() => {
@@ -60,9 +60,9 @@ const CapacitadoList = () => {
   return (
     <>
       <div className="top-list-buttons">
-        <Link to="/sgc/capacitado/inserir">
+        <Link to="/sgc/ocorrencia/inserir">
           <button type="button" className="button create-button">
-            Novo capacitado
+            Nova ocorrência
           </button>
         </Link>
         <button
@@ -89,27 +89,20 @@ const CapacitadoList = () => {
           <table className="table-container">
             <thead className="table-head">
               <tr>
-                <th scope="col">Nome do capacitado</th>
-                <th scope="col">Treinamento</th>
-                <th scope="col">Brigada</th>
-                <th scope="col">OM</th>
-                <th scope="col">Turma</th>
-                <th scope="col">Data início</th>
-                <th scope="col">Data fim</th>
-                <th scope="col">Modalidade</th>
+                <th scope="col">Título</th>
                 <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody className="table-body">
               {paginatedData.length > 0 ? (
                 paginatedData.map((t) => (
-                  <CapacitadoCard onLoad={loadInfo} key={t.id} element={t} />
+                  <OcorrenciaCard onLoad={loadInfo} key={t.id} element={t} />
                 ))
               ) : (
                 <tr>
                   <td colSpan={9}>
                     <div className="no-elements-on-table">
-                      <span>Não existem capacitados a serem exibidos.</span>
+                      <span>Não existem ocorrências a serem exibidas.</span>
                     </div>
                   </td>
                 </tr>
@@ -121,7 +114,7 @@ const CapacitadoList = () => {
                   <TablePagination
                     className="table-pagination-container"
                     component="div"
-                    count={capacitados ? capacitados.length : 0}
+                    count={ocorrencias ? ocorrencias.length : 0}
                     page={page}
                     onPageChange={handlePageChange}
                     rowsPerPage={rowsPerPage}
@@ -147,4 +140,4 @@ const CapacitadoList = () => {
   );
 };
 
-export default CapacitadoList;
+export default OcorrenciaList;

@@ -1,7 +1,9 @@
 import Navbar from "components/Navbar";
+import Admin from "pages/Admin";
 import Auth from "pages/Auth";
 import Capacitado from "pages/Capacitado";
 import Home from "pages/Home";
+import Ocorrencia from "pages/Ocorrencia";
 import Treinamento from "pages/Treinamento";
 import PrivateRoute from "PrivateRoute";
 import {
@@ -56,6 +58,31 @@ const Routes = () => {
                 ]}
               >
                 <Capacitado />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/ocorrencia/*"
+            element={
+              <PrivateRoute
+                roles={[
+                  { id: 1, autorizacao: "PERFIL_ADMIN" },
+                  { id: 2, autorizacao: "PERFIL_USUARIO" },
+                ]}
+              >
+                <Ocorrencia />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/usuario/*"
+            element={
+              <PrivateRoute
+                roles={[
+                  { id: 1, autorizacao: "PERFIL_ADMIN" },
+                ]}
+              >
+                <Admin />
               </PrivateRoute>
             }
           />

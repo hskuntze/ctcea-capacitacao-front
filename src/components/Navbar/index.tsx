@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import "./styles.css";
 import LogotipoSISFRON from "assets/images/corujinhaLoginEb.png";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "utils/contexts/AuthContext";
 import { removeAuthData, removeUserData } from "utils/storage";
+import { hasAnyRoles } from "utils/auth";
 
 const Navbar = () => {
   const { setAuthContextData } = useContext(AuthContext);
+
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const logout = () => {
     removeAuthData();
@@ -16,6 +19,10 @@ const Navbar = () => {
       authenticated: false,
     });
   };
+
+  useEffect(() => {
+    setIsAdmin(hasAnyRoles([{ id: 1, autorizacao: "PERFIL_ADMIN" }]));
+  }, []);
 
   return (
     <nav className="navbar-container navbar-expand-md">
@@ -47,6 +54,13 @@ const Navbar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarMenu">
           <ul className="navbar-nav navbar-menu">
+            {isAdmin && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/sgc/usuario">
+                  Usuários
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <Link className="nav-link" to="/sgc/treinamento">
                 Treinamento
@@ -61,7 +75,9 @@ const Navbar = () => {
               <button className="nav-link">Pesquisa de satisfação</button>
             </li>
             <li className="nav-item">
-              <button className="nav-link">Ocorrência</button>
+              <Link className="nav-link" to="/sgc/ocorrencia">
+                Ocorrência
+              </Link>
             </li>
             <li className="nav-item">
               <button className="nav-link">Controle de usuário</button>

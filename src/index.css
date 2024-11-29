@@ -263,6 +263,11 @@
   letter-spacing: -0.025rem;
 }
 
+.card-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
 @media (min-width: 768px) {
   .inspect-content span {
     margin: 4px 0;
@@ -274,5 +279,11 @@
 @media (min-width: 992px) {
   .inspect-content h5 {
     font-size: 22px;
+  }
+
+  .card-buttons {
+    min-width: 260px;
+    flex-direction: row;
+    justify-content: space-evenly;
   }
 }

@@ -110,7 +110,7 @@ const CapacitadoForm = () => {
   };
 
   const handleSelectTipo = (e: React.MouseEvent<HTMLInputElement>) => {
-    let isCivil = e.currentTarget.value === "1" ? true : false;
+    let isCivil = e.currentTarget.value === "2" ? true : false;
     setIsCivil(isCivil);
   };
 
@@ -206,8 +206,6 @@ const CapacitadoForm = () => {
         .then((res) => {
           let data = res.data as CapacitadoType;
 
-          console.log(data);
-
           setValue(
             "avaliacaoPratica",
             data.avaliacaoPratica === true ? "1" : "0"
@@ -240,7 +238,7 @@ const CapacitadoForm = () => {
           setValue("turma", data.turma);
           setValue("funcao", data.funcao);
           setValue("tipo", String(data.tipo));
-          setIsCivil(data.tipo === 1 ? true : false);
+          setIsCivil(data.tipo === 2 ? true : false);
           if (data.posto !== null) {
             setValue("posto", data.posto.id);
           }
@@ -434,11 +432,11 @@ const CapacitadoForm = () => {
                     errors.tipo ? "is-invalid" : ""
                   }`}
                   value="1"
-                  id="civil"
+                  id="militar"
                   {...register("tipo", { required: "Campo obrigatório" })}
                   onClick={handleSelectTipo}
                 />
-                <label htmlFor="civil">Civil</label>
+                <label htmlFor="militar">Militar</label>
                 <div className="invalid-feedback d-block">
                   {errors.tipo?.message}
                 </div>
@@ -450,11 +448,11 @@ const CapacitadoForm = () => {
                     errors.tipo ? "is-invalid" : ""
                   }`}
                   value="2"
-                  id="militar"
+                  id="civil"
                   {...register("tipo", { required: "Campo obrigatório" })}
                   onClick={handleSelectTipo}
                 />
-                <label htmlFor="militar">Militar</label>
+                <label htmlFor="civil">Civil</label>
                 <div className="invalid-feedback d-block">
                   {errors.tipo?.message}
                 </div>

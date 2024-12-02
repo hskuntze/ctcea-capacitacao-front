@@ -18,8 +18,9 @@ import {
 import { TablePagination } from "@mui/material";
 
 const TreinamentoList = () => {
-  const [treinamentos, setTreinamentos] = useState<TreinamentoType[]>();
+  const [treinamentos, setTreinamentos] = useState<TreinamentoType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -58,13 +59,42 @@ const TreinamentoList = () => {
     setPage(0);
   };
 
-  const paginatedData = treinamentos
-    ? treinamentos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    : [];
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(event.target.value.toLowerCase());
+    setPage(0);
+  };
+
+  const filteredData = treinamentos.filter((t) => {
+    const searchTerm = filter.trim();
+    if (!searchTerm) return true;
+
+    let executor = t.executor === 1 ? "eb" : "empresa";
+    return (
+      t.treinamento.toLowerCase().includes(searchTerm) ||
+      (t.descricaoAtividade.toLowerCase().includes(searchTerm) ?? false) ||
+      (t.material.toLowerCase().includes(searchTerm) ?? false) ||
+      (t.brigada.toLowerCase().includes(searchTerm) ?? false) || 
+      (t.om.toLowerCase().includes(searchTerm) ?? false) ||
+      (t.sad.toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarData(t.dataInicio).toLowerCase().includes(searchTerm) ?? false) || 
+      (formatarData(t.dataFim).toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarStatus(t.status).toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarModalidade(Number(t.modalidade)).toLowerCase().includes(searchTerm) ?? false) ||
+      (t.subsistema.toLowerCase().includes(searchTerm) ?? false) ||
+      (t.instituicao.toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarTipo(t.tipo).toLowerCase().includes(searchTerm) ?? false) ||
+      (executor.includes(searchTerm) ?? false)
+    );
+  });
+
+  const paginatedData = filteredData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const handleExportToExcel = () => {
-    if (treinamentos) {
-      const treinamentoProcessado = treinamentos.map((t) => ({
+    if (filteredData) {
+      const treinamentoProcessado = filteredData.map((t) => ({
         ...t,
         avaliacaoPratica: t.avaliacaoPratica === true ? "Sim" : "Não",
         avaliacaoTeorica: t.avaliacaoTeorica === true ? "Sim" : "Não",
@@ -100,7 +130,7 @@ const TreinamentoList = () => {
     const marginLeft = 15;
     const colWidth = 50;
 
-    treinamentos?.forEach((t, i) => {
+    filteredData?.forEach((t, i) => {
       doc.setFont("helvetica", "bold");
       doc.text(t.treinamento, marginLeft, y);
       y += lineHeight;
@@ -176,6 +206,25 @@ const TreinamentoList = () => {
           <i className="bi bi-file-earmark-excel" />
         </button>
       </div>
+      <div className="filtro-container">
+        <form>
+          <div className="filtro-input-div form-floating">
+            <input
+              type="text"
+              className="form-control filtro-input"
+              id="nome-treinamento-filtro"
+              placeholder="Digite um termo para filtrar"
+              onChange={handleFilterChange}
+            />
+            <label htmlFor="nome-treinamento-filtro">
+              Digite um termo para filtrar
+            </label>
+          </div>
+          <button className="search-button" type="button">
+            <i className="bi bi-search" />
+          </button>
+        </form>
+      </div>
       <div className="list-container">
         {loading ? (
           <div className="loader-div">
@@ -222,7 +271,7 @@ const TreinamentoList = () => {
                   <TablePagination
                     className="table-pagination-container"
                     component="div"
-                    count={treinamentos ? treinamentos.length : 0}
+                    count={filteredData.length}
                     page={page}
                     onPageChange={handlePageChange}
                     rowsPerPage={rowsPerPage}

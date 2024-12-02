@@ -6,6 +6,8 @@ import { Posto } from "types/posto";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
+import Loader from "components/Loader";
+import { User } from "types/user";
 
 type FormData = {
   nome: string;
@@ -29,6 +31,7 @@ const UsuarioForm = () => {
     setValue,
   } = useForm<FormData>();
 
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isCivil, setIsCivil] = useState<boolean | null>(null);
   const [postos, setPostos] = useState<Posto[]>([]);
@@ -37,9 +40,11 @@ const UsuarioForm = () => {
   const navigate = useNavigate();
 
   const onSubmit = (formData: FormData) => {
+    setLoading(true);
+
     const requestParams: AxiosRequestConfig = {
       url: `/usuarios/${isEditing ? `atualizar/${urlParams.id}` : "registrar"}`,
-      method: "POST",
+      method: isEditing ? "PUT" : "POST",
       withCredentials: true,
       data: {
         ...formData,
@@ -49,6 +54,9 @@ const UsuarioForm = () => {
             id: 2,
           },
         ],
+        posto: {
+          id: formData.posto,
+        },
       },
     };
 
@@ -64,6 +72,9 @@ const UsuarioForm = () => {
         toast.error(
           `Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário`
         );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -84,8 +95,47 @@ const UsuarioForm = () => {
       });
   }, []);
 
+  const loadInfo = useCallback(() => {
+    if (isEditing) {
+      setLoading(true);
+
+      const requestParams: AxiosRequestConfig = {
+        url: `/usuarios/id/${urlParams.id}`,
+        withCredentials: true,
+        method: "GET",
+      };
+
+      requestBackend(requestParams)
+        .then((res) => {
+          let data = res.data as User;
+
+          console.log(data);
+          setValue("email", data.email);
+          setValue("identidade", data.identidade);
+          setValue("instituicao", data.instituicao);
+          setValue("nome", data.nome);
+          if (data.nomeGuerra) {
+            setValue("nomeGuerra", data.nomeGuerra);
+          }
+          if (data.posto) {
+            setValue("posto", data.posto.id);
+          }
+          setValue("sobrenome", data.sobrenome);
+          setValue("tipo", String(data.tipo));
+          setIsCivil(data.tipo === 2 ? true : false);
+          setValue("telefone", data.telefone);
+        })
+        .catch((err) => {
+          toast.error("Erro ao tentar carregar informações do usuário.");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [isEditing, setValue, urlParams.id]);
+
   const handleSelectTipo = (e: React.MouseEvent<HTMLInputElement>) => {
-    let isCivil = e.currentTarget.value === "1" ? true : false;
+    let isCivil = e.currentTarget.value === "2" ? true : false;
     setIsCivil(isCivil);
   };
 
@@ -96,8 +146,9 @@ const UsuarioForm = () => {
   }, [urlParams]);
 
   useEffect(() => {
+    loadInfo();
     loadPostos();
-  }, [loadPostos]);
+  }, [loadPostos, loadInfo]);
 
   return (
     <div className="treinamento-container">
@@ -117,11 +168,11 @@ const UsuarioForm = () => {
                     errors.tipo ? "is-invalid" : ""
                   }`}
                   value="1"
-                  id="civil"
+                  id="militar"
                   {...register("tipo", { required: "Campo obrigatório" })}
                   onClick={handleSelectTipo}
                 />
-                <label htmlFor="civil">Civil</label>
+                <label htmlFor="militar">Militar</label>
                 <div className="invalid-feedback d-block">
                   {errors.tipo?.message}
                 </div>
@@ -133,11 +184,11 @@ const UsuarioForm = () => {
                     errors.tipo ? "is-invalid" : ""
                   }`}
                   value="2"
-                  id="militar"
+                  id="civil"
                   {...register("tipo", { required: "Campo obrigatório" })}
                   onClick={handleSelectTipo}
                 />
-                <label htmlFor="militar">Militar</label>
+                <label htmlFor="civil">Civil</label>
                 <div className="invalid-feedback d-block">
                   {errors.tipo?.message}
                 </div>
@@ -197,19 +248,21 @@ const UsuarioForm = () => {
                     {errors.identidade?.message}
                   </div>
                 </div>
-                <div className="treinamento-input-group form-floating">
-                  <input
-                    type="password"
-                    className={`form-control`}
-                    id="senha"
-                    placeholder="Senha"
-                    {...register("senha")}
-                  />
-                  <label htmlFor="senha">Senha (provisória)</label>
-                  <div className="invalid-feedback d-block">
-                    {errors.senha?.message}
+                {!isEditing && (
+                  <div className="treinamento-input-group form-floating">
+                    <input
+                      type="password"
+                      className={`form-control`}
+                      id="senha"
+                      placeholder="Senha"
+                      {...register("senha")}
+                    />
+                    <label htmlFor="senha">Senha (provisória)</label>
+                    <div className="invalid-feedback d-block">
+                      {errors.senha?.message}
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="treinamento-input-group form-floating">
                   <input
                     type="text"
@@ -282,7 +335,13 @@ const UsuarioForm = () => {
             )}
           </div>
         </div>
-        <button className="button submit-button">Salvar</button>
+        {loading ? (
+          <div className="loader-div">
+            <Loader />
+          </div>
+        ) : (
+          <button className="button submit-button">Salvar</button>
+        )}
       </form>
     </div>
   );

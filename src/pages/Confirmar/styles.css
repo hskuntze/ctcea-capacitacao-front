@@ -1,0 +1,19 @@
+.confirmado-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(20% - 145px);
+  height: 100%;
+}
+
+.confirmado-content {
+  width: 50%;
+  height: 50%;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 1px 0 10px 6px #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px;
+}

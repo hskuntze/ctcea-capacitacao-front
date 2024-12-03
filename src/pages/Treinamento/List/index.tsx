@@ -74,7 +74,7 @@ const TreinamentoList = () => {
       (t.descricaoAtividade.toLowerCase().includes(searchTerm) ?? false) ||
       (t.material.toLowerCase().includes(searchTerm) ?? false) ||
       (t.brigada.toLowerCase().includes(searchTerm) ?? false) || 
-      (t.om.toLowerCase().includes(searchTerm) ?? false) ||
+      (t.om.sigla.toLowerCase().includes(searchTerm) ?? false) ||
       (t.sad.toLowerCase().includes(searchTerm) ?? false) ||
       (formatarData(t.dataInicio).toLowerCase().includes(searchTerm) ?? false) || 
       (formatarData(t.dataFim).toLowerCase().includes(searchTerm) ?? false) ||

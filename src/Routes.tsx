@@ -1,6 +1,7 @@
 import Navbar from "components/Navbar";
 import Admin from "pages/Admin";
 import Auth from "pages/Auth";
+import Avaliacao from "pages/Avaliacao";
 import Capacitado from "pages/Capacitado";
 import Confirmar from "pages/Confirmar";
 import Home from "pages/Home";
@@ -79,12 +80,21 @@ const Routes = () => {
           <Route
             path="/sgc/usuario/*"
             element={
+              <PrivateRoute roles={[{ id: 1, autorizacao: "PERFIL_ADMIN" }]}>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/avaliacao/*"
+            element={
               <PrivateRoute
                 roles={[
                   { id: 1, autorizacao: "PERFIL_ADMIN" },
+                  { id: 2, autorizacao: "PERFIL_USUARIO" },
                 ]}
               >
-                <Admin />
+                <Avaliacao />
               </PrivateRoute>
             }
           />

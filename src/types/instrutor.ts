@@ -3,9 +3,9 @@ export type Instrutor = {
   email: string;
   nome: string;
   contato: string;
-  engajamento?: number;
-  clareza?: number;
-  nivelConhecimento?: number;
-  capacidadeResposta?: number;
-  capacidadeGerirAula?: number;
+  engajamento?: number | string;
+  clareza?: number | string;
+  nivelConhecimento?: number | string;
+  capacidadeResposta?: number | string;
+  capacidadeGerirAula?: number | string;
 };

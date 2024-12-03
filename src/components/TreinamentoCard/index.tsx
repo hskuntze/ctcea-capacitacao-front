@@ -46,7 +46,7 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
         <div className="card-content">{element.material}</div>
       </td>
       <td>
-        <div className="card-content">{element.om}</div>
+        <div className="card-content">{element.om.sigla}</div>
       </td>
       <td>
         <div className="card-content">{element.brigada}</div>

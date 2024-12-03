@@ -42,7 +42,7 @@ type FormData = {
 const OcorrenciaForm = () => {
   const {
     control,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     handleSubmit,
     register,
     setValue,
@@ -54,6 +54,7 @@ const OcorrenciaForm = () => {
   );
 
   const [tipoOutros, setTipoOutros] = useState(false);
+  const [treinamento, setTreinamento] = useState<TreinamentoType>();
   const [impactoOcorrencia, setImpactoOcorrencia] = useState(false);
   const [statusClassificacao, setStatusClassificacao] = useState(0);
 
@@ -71,7 +72,8 @@ const OcorrenciaForm = () => {
       "treinamento.modalidade",
       formatarModalidade(Number(value.modalidade))
     );
-    setValue("treinamento.om", value.om);
+    setValue("treinamento.om.sigla", value.om.sigla);
+    setValue("treinamento.om.cidadeestado", value.om.cidadeestado);
   };
 
   const loadInfo = useCallback(() => {
@@ -87,11 +89,13 @@ const OcorrenciaForm = () => {
           let data = res.data as OcorrenciaType;
           let treinamento = data.treinamento as TreinamentoType;
 
+          setTreinamento(treinamento);
           setValue("treinamento", treinamento);
           setValue("treinamento.id", treinamento.id);
           setValue("treinamento.modalidade", formatarModalidade(Number(treinamento.modalidade)));
           setValue("treinamento.brigada", treinamento.brigada);
-          setValue("treinamento.om", treinamento.om);
+          setValue("treinamento.om.sigla", treinamento.om.sigla);
+          setValue("treinamento.om.cidadeestado", treinamento.om.cidadeestado);
           setValue("treinamento.dataInicio", formatarData(treinamento.dataInicio));
           setValue("treinamento.dataFim", formatarData(treinamento.dataFim));
 
@@ -217,6 +221,7 @@ const OcorrenciaForm = () => {
 
   return (
     <div className="treinamento-container">
+      <h3 className="form-title">Ocorrências</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="treinamento-form">
         <div className="treinamento-content">
           <div className="treinamento-left">
@@ -232,17 +237,17 @@ const OcorrenciaForm = () => {
                   <Autocomplete
                     disablePortal
                     options={todosTreinamentos}
-                    getOptionLabel={(opt) => opt.treinamento}
+                    getOptionLabel={(opt) => opt.treinamento ? opt.treinamento : ""}
                     classes={{
                       inputRoot: `form-control input-element-root ${
-                        errors.treinamento ? "invalido" : ""
+                        isSubmitted && treinamento === undefined ? "invalido" : ""
                       }`,
                       input: "input-element-inside",
                       root: "autocomplete-root",
                       inputFocused: "input-element-focused",
                     }}
                     {...register("treinamento")}
-                    value={field.value ? field.value : null}
+                    value={field.value}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -261,14 +266,17 @@ const OcorrenciaForm = () => {
                     onChange={(event, value) => {
                       if (value) {
                         handleSelectTreinamento(value);
+                        setTreinamento(value);
                       } else {
                         setValue("treinamento", null);
                         setValue("treinamento.id", null);
                         setValue("treinamento.dataInicio", "");
                         setValue("treinamento.dataFim", "");
                         setValue("treinamento.brigada", "");
-                        setValue("treinamento.om", "");
+                        setValue("treinamento.om.sigla", "");
+                        setValue("treinamento.om.cidadeestado", "");
                         setValue("treinamento.modalidade", "");
+                        setTreinamento(undefined);
                       }
                     }}
                   />
@@ -315,12 +323,23 @@ const OcorrenciaForm = () => {
               <input
                 type="text"
                 className={`form-control`}
-                id="om-treinamento"
+                id="om-sigla"
                 placeholder="OM (Organização Militar)"
-                {...register("treinamento.om")}
+                {...register("treinamento.om.sigla")}
                 disabled
               />
-              <label htmlFor="om-treinamento">OM (Organização Militar)</label>
+              <label htmlFor="om-sigla">OM (Organização Militar)</label>
+            </div>
+            <div className="treinamento-input-group form-floating">
+              <input
+                type="text"
+                className={`form-control`}
+                id="om-cidade-estado"
+                placeholder="Cidade/Estado"
+                {...register("treinamento.om.cidadeestado")}
+                disabled
+              />
+              <label htmlFor="om-cidade-estado">Cidade/Estado</label>
             </div>
             <div className="treinamento-input-group form-floating">
               <input

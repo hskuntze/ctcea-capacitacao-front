@@ -25,7 +25,7 @@ type FormData = {
   subsistema: string;
   modalidade: string;
   brigada: string;
-  om: string;
+  om: OM;
   turmas: Turma[];
   executor: string;
   instituicao: string;
@@ -218,7 +218,7 @@ const TreinamentoForm = () => {
           setValue("subsistema", String(data.subsistema));
           setValue("modalidade", String(data.modalidade));
           setValue("brigada", String(data.brigada));
-          setValue("om", String(data.om));
+          setValue("om", data.om as OM);
           setValue("executor", String(data.executor));
           setValue("instituicao", data.instituicao);
           setValue("dataInicio", dayjs(data.dataInicio));
@@ -325,7 +325,9 @@ const TreinamentoForm = () => {
         executor: executor,
         dataInicio: dataInicio,
         dataFim: dataFim,
-        om: formData.om,
+        om: {
+          codigo: formData.om
+        },
         brigada: formData.brigada,
         instituicao: formData.instituicao,
         vagas: formData.vagas,
@@ -435,6 +437,7 @@ const TreinamentoForm = () => {
 
   return (
     <div className="treinamento-container">
+      <h3 className="form-title">Treinamentos</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="treinamento-form">
         <div className="treinamento-content">
           <div className="treinamento-left">
@@ -637,11 +640,12 @@ const TreinamentoForm = () => {
                     id="om"
                     className={`form-select ${errors.om ? "is-invalid" : ""}`}
                     {...field}
+                    value={field.value?.codigo}
                   >
                     <option>Selecione uma OM</option>
                     {oms &&
                       oms.map((om) => (
-                        <option key={om.codigo} value={om.sigla}>
+                        <option key={om.codigo} value={om.codigo}>
                           {om.sigla}
                         </option>
                       ))}
@@ -659,7 +663,7 @@ const TreinamentoForm = () => {
             <div className="treinamento-input-group">
               {turmaFields.map((field, index) => (
                 <div key={field.nome}>
-                  <h6>Turma</h6>
+                  <h6><b>Turma</b></h6>
                   <div className="turma-row">
                     <div className="input-turma-group form-floating">
                       <input
@@ -1344,7 +1348,7 @@ const TreinamentoForm = () => {
             <div className="treinamento-input-group">
               {instrutorFields.map((field, index) => (
                 <div key={field.email}>
-                  <h6>Instrutor {index + 1}</h6>
+                  <h6><b>Instrutor {index + 1}</b></h6>
                   <div className="input-instrutor-group form-floating">
                     <input
                       className={`form-control ${

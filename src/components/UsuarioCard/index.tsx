@@ -1,17 +1,21 @@
-import { CapacitadoType } from "types/capacitado";
+import { User } from "types/user";
 import "./styles.css";
-import { formatarData, formatarModalidade } from "utils/functions";
-import { Link } from "react-router-dom";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 interface Props {
-  element: CapacitadoType;
+  element: User;
   onLoad: () => void;
 }
 
-const CapacitadoCard = ({ element, onLoad }: Props) => {
+const UsuarioCard = ({ element, onLoad }: Props) => {
+  useEffect(() => {
+    console.log(element);
+  }, [element]);
+
   const deleteElement = (id: number) => {
     let confirm = window.confirm(
       "Você tem certeza que deseja deletar esse elemento?"
@@ -19,7 +23,7 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
 
     if (confirm) {
       const requestParams: AxiosRequestConfig = {
-        url: `/capacitados/deletar/${id}`,
+        url: `/usuarios/deletar/${id}`,
         method: "DELETE",
         withCredentials: true,
       };
@@ -31,7 +35,6 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
           onLoad();
         })
         .catch((err) => {
-          console.log(err);
           toast.error("Erro ao deletar.");
         });
     }
@@ -40,47 +43,28 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
   return (
     <tr className="card-container">
       <td>
-        <div className="card-content">{element.nomeCompleto}</div>
+        <div className="card-content">{element.nome}</div>
       </td>
       <td>
-        <div className="card-content">
-          {element.treinamento.treinamento}
-        </div>
+        <div className="card-content">{element.sobrenome}</div>
       </td>
       <td>
-        <div className="card-content">
-          {element.treinamento.brigada}
-        </div>
+        <div className="card-content">{element.identidade}</div>
       </td>
       <td>
-        <div className="card-content">{element.treinamento.om.sigla}</div>
+        <div className="card-content">{element.email}</div>
       </td>
       <td>
-        <div className="card-content">{element.turma}</div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarData(element.treinamento.dataInicio)}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarData(element.treinamento.dataFim)}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarModalidade(Number(element.treinamento.modalidade))}
-        </div>
+        <div className="card-content">{element.perfis[0].autorizacao}</div>
       </td>
       <td>
         <div className="card-buttons">
-          <Link to={`/sgc/capacitado/visualizar/${element.id}`}>
+          <Link to={`/sgc/usuario/visualizar/${element.id}`}>
             <button className="act-button submit-button">
               <i className="bi bi-file-earmark-text" />
             </button>
           </Link>
-          <Link to={`/sgc/capacitado/${element.id}`}>
+          <Link to={`/sgc/usuario/${element.id}`}>
             <button className="act-button edit-button" type="button">
               <i className="bi bi-pencil" />
             </button>
@@ -88,7 +72,11 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
           <button
             className="act-button delete-button"
             type="button"
-            onClick={() => deleteElement(element.id)}
+            onClick={() => {
+              if (element.id) {
+                deleteElement(element.id);
+              }
+            }}
           >
             <i className="bi bi-trash" />
           </button>
@@ -98,4 +86,4 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
   );
 };
 
-export default CapacitadoCard;
+export default UsuarioCard;

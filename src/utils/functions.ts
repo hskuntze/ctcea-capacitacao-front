@@ -67,3 +67,20 @@ export const formatarPublicoAlvo = (publicoAlvo: number) => {
 
   return publicosAlvo[publicoAlvo] || "Público-alvo inválida";
 };
+
+/**
+ * Função que interpreta a avaliação baseado no valor da nota
+ * @param nota 
+ * @returns avaliação - String
+ */
+export const formatarAvaliacao = (nota: number) => {
+  const avaliacoes: { [key: number]: string } = {
+    1: "Insatisfatório",
+    2: "Regular",
+    3: "Bom",
+    4: "Muito bom",
+    5: "Excelente",
+  };
+
+  return avaliacoes[nota] || "Nota inválida";
+};

@@ -1,18 +1,17 @@
-import "./styles.css";
-import { Link } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
-import Loader from "components/Loader";
-import { CapacitadoType } from "types/capacitado";
-import { AxiosRequestConfig } from "axios";
-import { requestBackend } from "utils/requests";
 import { TablePagination } from "@mui/material";
-import CapacitadoCard from "components/CapacitadoCard";
-import { formatarData, formatarModalidade } from "utils/functions";
-import * as XLSX from "xlsx";
+import { AxiosRequestConfig } from "axios";
+import AvaliacaoCard from "components/AvaliacaoCard";
+import Loader from "components/Loader";
 import jsPDF from "jspdf";
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { AvaliacaoType } from "types/avaliacao";
+import { formatarAvaliacao, formatarData } from "utils/functions";
+import { requestBackend } from "utils/requests";
+import * as XLSX from "xlsx";
 
-const CapacitadoList = () => {
-  const [capacitados, setCapacitados] = useState<CapacitadoType[]>([]);
+const AvaliacaoList = () => {
+  const [avaliacoes, setAvaliacoes] = useState<AvaliacaoType[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
@@ -22,14 +21,14 @@ const CapacitadoList = () => {
     setLoading(true);
 
     const requestParams: AxiosRequestConfig = {
-      url: "/capacitados",
+      url: "/avaliacoes",
       method: "GET",
       withCredentials: true,
     };
 
     requestBackend(requestParams)
       .then((res) => {
-        setCapacitados(res.data as CapacitadoType[]);
+        setAvaliacoes(res.data as AvaliacaoType[]);
       })
       .catch((err) => {
         console.log(err);
@@ -58,45 +57,46 @@ const CapacitadoList = () => {
     setPage(0);
   };
 
-  const filteredData = capacitados.filter((c) => {
+  const filteredData = avaliacoes.filter((c) => {
     const searchTerm = filter.trim();
     if (!searchTerm) return true;
 
     return (
       c.treinamento.treinamento.toLowerCase().includes(searchTerm) ||
-      (c.nomeCompleto.toLowerCase().includes(searchTerm) ?? false) ||
       (c.treinamento.brigada.toLowerCase().includes(searchTerm) ?? false) ||
-      (c.treinamento.om.sigla.toLowerCase().includes(searchTerm) ?? false) ||
-      (c.turma.toLowerCase().includes(searchTerm) ?? false) ||
-      (formatarData(c.treinamento.dataInicio)
-        .toLowerCase()
-        .includes(searchTerm) ??
-        false) ||
-      (formatarData(c.treinamento.dataFim).toLowerCase().includes(searchTerm) ??
-        false) ||
-      (formatarModalidade(Number(c.treinamento.modalidade))
-        .toLowerCase()
-        .includes(searchTerm) ??
-        false)
+      (c.treinamento.om.sigla.toLowerCase().includes(searchTerm) ?? false)
     );
   });
 
-  const paginatedData = filteredData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
   const handleExportToExcel = () => {
     if (filteredData) {
-      const capacitadosProcessado = filteredData.map((t) => ({
-        ...t
+      const avaliacoesProcessado = filteredData.map((a) => ({
+        Treinamento: a.treinamento.treinamento,
+        "Data Início": formatarData(a.treinamento.dataInicio),
+        "Data Fim": formatarData(a.treinamento.dataFim),
+        Instrutores: a.treinamento.instrutores
+          ? a.treinamento.instrutores
+              .map(
+                (instrutor, index) =>
+                  `Instrutor ${index + 1}: ${instrutor.nome}`
+              )
+              .join("; ")
+          : "Nenhum instrutor",
+        "Apostila Atualizada": formatarAvaliacao(a.apostilaAtualizada),
+        "Engajamento dos instrutores": a.treinamento.instrutores
+          ? a.treinamento.instrutores
+              .map(
+                (i) => `${i.nome}: ${formatarAvaliacao(Number(i.engajamento))}`
+              )
+              .join("; ")
+          : "",
       }));
 
-      const ws = XLSX.utils.json_to_sheet(capacitadosProcessado);
+      const ws = XLSX.utils.json_to_sheet(avaliacoesProcessado);
       const wb = XLSX.utils.book_new();
 
-      XLSX.utils.book_append_sheet(wb, ws, "Capacitados");
-      XLSX.writeFile(wb, "capacitados.xlsx");
+      XLSX.utils.book_append_sheet(wb, ws, "Avaliações");
+      XLSX.writeFile(wb, "avaliacoes.xlsx");
     }
   };
 
@@ -107,44 +107,39 @@ const CapacitadoList = () => {
     doc.text("Capacitados", 5, 20);
 
     doc.setFontSize(12);
-    const yStart = 30;
+    const yStart = 50;
     let y = yStart;
     const lineHeight = 10;
     const marginLeft = 15;
-    const colWidth = 50;
+    let colWidth = 140;
+    let colWidthInstrutor = 35;
 
-    filteredData?.forEach((c, i) => {
+    filteredData?.forEach((a, i) => {
       doc.setFont("helvetica", "bold");
-      doc.text(c.nomeCompleto, marginLeft, y);
+      doc.text(a.treinamento.treinamento, marginLeft, y);
       y += lineHeight;
 
-      let avalPratica = c.avaliacaoPratica === true ? "Sim" : "Não";
-      let avalTeorica = c.avaliacaoTeorica === true ? "Sim" : "Não";
-      let exigeNotaPratica = c.exigeNotaPratica === true ? "Sim" : "Não";
-      let exigeNotaTeorica = c.exigeNotaTeorica === true ? "Sim" : "Não";
-      let notaPratica = c.notaPratica ? String(c.notaPratica) : "";
-      let notaTeorica = c.notaTeorica ? String(c.notaTeorica) : "";
-      let posto = c.posto ? c.posto.titulo : "";
-      let brigada = c.brigadaMilitar ? c.brigadaMilitar : "";
-      let tipoCertificado = c.tipoCertificado ? c.tipoCertificado.join(", ") : "";
-
       const data = [
-        ["E-mail", c.email],
-        ["Celular", c.celular],
-        ["Instituição/OM", c.instituicao ?? ""],
-        ["Nome de guerra", c.nomeGuerra ?? ""],
-        ["Número BI", c.numeroBi],
-        ["Função", c.funcao],
-        ["Turma", c.turma],
-        ["Posto", posto],
-        ["Brigada", brigada],
-        ["Avaliação prática?", avalPratica],
-        ["Avaliação teórica?", avalTeorica],
-        ["Exige nota prática?", exigeNotaPratica],
-        ["Exige nota teórica?", exigeNotaTeorica],
-        ["Nota prática", notaPratica],
-        ["Nota teórica", notaTeorica],
-        ["Tipo certificado", tipoCertificado]
+        [
+          "Qualidade geral da apostila do treinamento?",
+          formatarAvaliacao(a.qualidadeMaterial),
+        ],
+        [
+          "Apostila estava objetiva e clara para entendimento?",
+          formatarAvaliacao(a.apostilaObjetiva),
+        ],
+        [
+          "Apostila estava atualizada e em sequência adequada?",
+          formatarAvaliacao(a.apostilaAtualizada),
+        ],
+        [
+          "Questões estavam relacionadas ao conteúdo minstrado em aula?",
+          formatarAvaliacao(a.questoesRelacionadas),
+        ],
+        [
+          "Questões estavam claras e abrangentes?",
+          formatarAvaliacao(a.questoesClaras),
+        ],
       ];
 
       data.forEach(([k, v]) => {
@@ -160,11 +155,74 @@ const CapacitadoList = () => {
         }
       });
 
+      if (a.treinamento.instrutores && a.treinamento.instrutores.length > 0) {
+        doc.setFont("helvetica", "bold");
+        doc.text("Instrutores:", marginLeft, y);
+        y += lineHeight;
+
+        a.treinamento.instrutores.forEach((instrutor, index) => {
+          doc.setFont("helvetica", "bold");
+          doc.text(`Instrutor ${index + 1}:`, marginLeft, y);
+          doc.setFont("helvetica", "normal");
+          doc.text(`Nome: ${instrutor.nome}`, marginLeft + colWidthInstrutor, y);
+          y += lineHeight;
+
+          doc.text(
+            `Engajamento: ${formatarAvaliacao(Number(instrutor.engajamento)) ?? "Não informado"}`,
+            marginLeft + colWidthInstrutor,
+            y
+          );
+          y += lineHeight;
+
+          doc.text(
+            `Clareza: ${formatarAvaliacao(Number(instrutor.clareza)) ?? "Não informado"}`,
+            marginLeft + colWidthInstrutor,
+            y
+          );
+          y += lineHeight;
+
+          doc.text(
+            `Nível de conhecimento técnico: ${formatarAvaliacao(Number(instrutor.nivelConhecimento)) ?? "Não informado"}`,
+            marginLeft + colWidthInstrutor,
+            y
+          );
+          y += lineHeight;
+
+          doc.text(
+            `Capacidade de responder a perguntas: ${formatarAvaliacao(Number(instrutor.capacidadeResposta)) ?? "Não informado"}`,
+            marginLeft + colWidthInstrutor,
+            y
+          );
+          y += lineHeight;
+
+          doc.text(
+            `Capacidade de gerir a aula e o tempo: ${formatarAvaliacao(Number(instrutor.capacidadeGerirAula)) ?? "Não informado"}`,
+            marginLeft + colWidthInstrutor,
+            y
+          );
+          y += lineHeight;
+
+          if (y > 270) {
+            doc.addPage();
+            y = 20;
+          }
+        });
+      } else {
+        doc.setFont("helvetica", "italic");
+        doc.text("Nenhum instrutor registrado.", marginLeft, y);
+        y += lineHeight;
+      }
+
       y += 10;
     });
 
     doc.save("capacitados.pdf");
   };
+
+  const paginatedData = filteredData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   useEffect(() => {
     loadInfo();
@@ -173,9 +231,9 @@ const CapacitadoList = () => {
   return (
     <>
       <div className="top-list-buttons">
-        <Link to="/sgc/capacitado/inserir">
+        <Link to="/sgc/avaliacao/inserir">
           <button type="button" className="button create-button">
-            Novo capacitado
+            Nova avaliação
           </button>
         </Link>
         <button
@@ -221,27 +279,20 @@ const CapacitadoList = () => {
           <table className="table-container">
             <thead className="table-head">
               <tr>
-                <th scope="col">Nome do capacitado</th>
                 <th scope="col">Treinamento</th>
-                <th scope="col">Brigada</th>
-                <th scope="col">OM</th>
-                <th scope="col">Turma</th>
-                <th scope="col">Data início</th>
-                <th scope="col">Data fim</th>
-                <th scope="col">Modalidade</th>
                 <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody className="table-body">
               {paginatedData.length > 0 ? (
                 paginatedData.map((t) => (
-                  <CapacitadoCard onLoad={loadInfo} key={t.id} element={t} />
+                  <AvaliacaoCard onLoad={loadInfo} key={t.id} element={t} />
                 ))
               ) : (
                 <tr>
-                  <td colSpan={9}>
+                  <td colSpan={2}>
                     <div className="no-elements-on-table">
-                      <span>Não existem capacitados a serem exibidos.</span>
+                      <span>Não existem avaliações a serem exibidas.</span>
                     </div>
                   </td>
                 </tr>
@@ -279,4 +330,4 @@ const CapacitadoList = () => {
   );
 };
 
-export default CapacitadoList;
+export default AvaliacaoList;

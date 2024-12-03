@@ -1,19 +1,19 @@
 export type OM = {
-  codigo: number | null;
-  id: number | null;
+  codigo: number;
+  id: number;
   codom: string;
   sigla: string;
   rm: string;
   cma: string;
   de: string;
   cidadeestado: string;
-  cnpj: string;
+  cnpj: string | null;
   tipo: string;
   bda: string;
   forpron: string;
   omcommaterial: string;
   endereco: string;
   cep: string;
-  nivel: number | null;
-  codregra: number | null;
+  nivel: number;
+  codregra: number;
 };

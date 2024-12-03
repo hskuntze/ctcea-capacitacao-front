@@ -1,56 +1,66 @@
-import "./styles.css";
-
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-
-import { getTokenData } from "utils/auth";
-import { AuthContext } from "utils/contexts/AuthContext";
-import { requestBackendLogin } from "utils/requests";
-import { saveAuthData } from "utils/storage";
-
 import LogotipoSGC from "assets/images/logotipo-sgc.png";
+import { AxiosRequestConfig } from "axios";
 import Loader from "components/Loader";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { requestBackend } from "utils/requests";
 
 type FormData = {
-  username: string;
-  password: string;
+  senha: string;
+  confirmarSenha: string;
 };
 
-const Login = () => {
-  const { setAuthContextData } = useContext(AuthContext);
+type UrlParams = {
+  token: string;
+};
 
+const Recover = () => {
   const [loading, setLoading] = useState(false);
 
+  const urlParams = useParams<UrlParams>();
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<FormData>();
 
   const onSubmit = (formData: FormData) => {
     setLoading(true);
 
-    requestBackendLogin(formData)
-      .then((res) => {
-        saveAuthData(res.data);
-        setAuthContextData({
-          authenticated: true,
-          tokenData: getTokenData(),
-        });
+    const requestParams: AxiosRequestConfig = {
+      url: "/usuarios/salvarTrocaDeSenha",
+      method: "POST",
+      withCredentials: false,
+      data: {
+        password: formData.senha,
+        token: urlParams.token,
+      },
+    };
 
+    requestBackend(requestParams)
+      .then(() => {
+        toast.success("Sucesso ao trocar a senha.");
         navigate("/sgc");
       })
       .catch((err) => {
-        toast.error("Não foi possível realizar o login.");
+        console.log(err);
+        toast.error("Erro ao trocar a senha.");
       })
       .finally(() => {
         setLoading(false);
       });
   };
+
+  const senha = watch("senha");
+
+  useEffect(() => {
+    console.log(urlParams.token);
+  }, [urlParams.token]);
 
   return (
     <div className="login-container">
@@ -64,50 +74,45 @@ const Login = () => {
         <div className="login-form-content">
           <div className="login-input-group">
             <input
-              type="text"
-              id="login-username"
-              placeholder="Nome de usuário"
+              type="password"
+              id="senha"
+              placeholder="Nova senha"
               className="input-element"
-              {...register("username", {
+              {...register("senha", {
                 required: "Campo obrigatório",
               })}
             />
             <div className="invalid-feedback d-block div-erro">
-              {errors.username?.message}
+              {errors.senha?.message}
             </div>
           </div>
           <div className="login-input-group">
             <input
               type="password"
-              id="login-password"
-              placeholder="Senha"
+              id="confirmar-senha"
+              placeholder="Confirme a nova senha"
               className="input-element"
-              {...register("password", {
+              {...register("confirmarSenha", {
                 required: "Campo obrigatório",
+                validate: (value) =>
+                  value === senha || "Senhas não correspondem",
               })}
             />
             <div className="invalid-feedback d-block div-erro">
-              {errors.password?.message}
+              {errors.confirmarSenha?.message}
             </div>
           </div>
           {loading ? (
             <Loader />
           ) : (
-            <>
-              <button type="submit" className="button submit-button">
-                Login
-              </button>
-            </>
+            <button type="submit" className="button submit-button">
+              Trocar senha
+            </button>
           )}
         </div>
       </form>
-      <Link to="/sgc/enviaremail">
-        <button type="button" className="button">
-          Trocar/recuperar senha
-        </button>
-      </Link>
     </div>
   );
 };
 
-export default Login;
+export default Recover;

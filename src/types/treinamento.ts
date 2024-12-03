@@ -1,6 +1,7 @@
 import { Instrutor } from "./instrutor";
 import { LogisticasTreinamento } from "./logisticasTreinamento";
 import { MaterialDidatico } from "./materialDidatico";
+import { OM } from "./om";
 import { Turma } from "./turma";
 
 export type TreinamentoType = {
@@ -12,7 +13,7 @@ export type TreinamentoType = {
   subsistema: string;
   modalidade: number | string;
   brigada: string;
-  om: string;
+  om: OM;
   turmas: Turma[];
   executor: number;
   instituicao: string;

@@ -66,7 +66,7 @@ const TreinamentoInspect = () => {
             <b>Brigada:</b> {treinamento?.brigada}
           </span>
           <span>
-            <b>OM:</b> {treinamento?.om}
+            <b>OM:</b> {treinamento?.om.sigla}
           </span>
           <span>
             <b>Executor:</b> {treinamento?.executor === 1 ? "EB" : "Empresa"}

@@ -1,7 +1,11 @@
 import Navbar from "components/Navbar";
+import Admin from "pages/Admin";
 import Auth from "pages/Auth";
+import Avaliacao from "pages/Avaliacao";
 import Capacitado from "pages/Capacitado";
+import Confirmar from "pages/Confirmar";
 import Home from "pages/Home";
+import Ocorrencia from "pages/Ocorrencia";
 import Treinamento from "pages/Treinamento";
 import PrivateRoute from "PrivateRoute";
 import {
@@ -19,6 +23,8 @@ const Routes = () => {
       <main id="main">
         <Switch>
           <Route path="/" element={<Navigate to="/sgc" />} />
+          <Route path="/sgc/*" element={<Auth />} />
+          <Route path="/sgc/confirmado" element={<Confirmar />} />
           <Route
             path="/sgc"
             element={
@@ -32,7 +38,6 @@ const Routes = () => {
               </PrivateRoute>
             }
           />
-          <Route path="/sgc/login" element={<Auth />} />
           <Route
             path="/sgc/treinamento/*"
             element={
@@ -56,6 +61,40 @@ const Routes = () => {
                 ]}
               >
                 <Capacitado />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/ocorrencia/*"
+            element={
+              <PrivateRoute
+                roles={[
+                  { id: 1, autorizacao: "PERFIL_ADMIN" },
+                  { id: 2, autorizacao: "PERFIL_USUARIO" },
+                ]}
+              >
+                <Ocorrencia />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/usuario/*"
+            element={
+              <PrivateRoute roles={[{ id: 1, autorizacao: "PERFIL_ADMIN" }]}>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/avaliacao/*"
+            element={
+              <PrivateRoute
+                roles={[
+                  { id: 1, autorizacao: "PERFIL_ADMIN" },
+                  { id: 2, autorizacao: "PERFIL_USUARIO" },
+                ]}
+              >
+                <Avaliacao />
               </PrivateRoute>
             }
           />

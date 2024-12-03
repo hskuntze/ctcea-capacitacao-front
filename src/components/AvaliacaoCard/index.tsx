@@ -1,17 +1,17 @@
-import { CapacitadoType } from "types/capacitado";
 import "./styles.css";
-import { formatarData, formatarModalidade } from "utils/functions";
+import { formatarData } from "utils/functions";
 import { Link } from "react-router-dom";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
+import { AvaliacaoType } from "types/avaliacao";
 
 interface Props {
-  element: CapacitadoType;
+  element: AvaliacaoType;
   onLoad: () => void;
 }
 
-const CapacitadoCard = ({ element, onLoad }: Props) => {
+const AvaliacaoCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(
       "Você tem certeza que deseja deletar esse elemento?"
@@ -19,7 +19,7 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
 
     if (confirm) {
       const requestParams: AxiosRequestConfig = {
-        url: `/capacitados/deletar/${id}`,
+        url: `/avaliacoes/deletar/${id}`,
         method: "DELETE",
         withCredentials: true,
       };
@@ -40,47 +40,16 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
   return (
     <tr className="card-container">
       <td>
-        <div className="card-content">{element.nomeCompleto}</div>
-      </td>
-      <td>
-        <div className="card-content">
-          {element.treinamento.treinamento}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">
-          {element.treinamento.brigada}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">{element.treinamento.om.sigla}</div>
-      </td>
-      <td>
-        <div className="card-content">{element.turma}</div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarData(element.treinamento.dataInicio)}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarData(element.treinamento.dataFim)}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarModalidade(Number(element.treinamento.modalidade))}
-        </div>
+        <div className="card-content">{element.treinamento.treinamento}</div>
       </td>
       <td>
         <div className="card-buttons">
-          <Link to={`/sgc/capacitado/visualizar/${element.id}`}>
+          <Link to={`/sgc/avaliacao/visualizar/${element.id}`}>
             <button className="act-button submit-button">
               <i className="bi bi-file-earmark-text" />
             </button>
           </Link>
-          <Link to={`/sgc/capacitado/${element.id}`}>
+          <Link to={`/sgc/avaliacao/${element.id}`}>
             <button className="act-button edit-button" type="button">
               <i className="bi bi-pencil" />
             </button>
@@ -98,4 +67,4 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
   );
 };
 
-export default CapacitadoCard;
+export default AvaliacaoCard;

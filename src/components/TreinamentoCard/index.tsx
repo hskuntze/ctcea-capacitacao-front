@@ -38,60 +38,60 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
   };
 
   return (
-    <tr className="treinamento-card-container">
+    <tr className="card-container">
       <td>
-        <div className="treinamento-card-content">{element.treinamento}</div>
+        <div className="card-content">{element.treinamento}</div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.material}</div>
+        <div className="card-content">{element.material}</div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.om}</div>
+        <div className="card-content">{element.om.sigla}</div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.brigada}</div>
+        <div className="card-content">{element.brigada}</div>
       </td>
       <td>
-        <div className="treinament-card-content">
+        <div className="card-content">
           {formatarTipo(element.tipo)}
         </div>
       </td>
       <td>
-        <div className="treinament-card-content">
+        <div className="card-content">
           {element.executor === 1 ? "EB" : "Empresa"}
         </div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.instituicao}</div>
+        <div className="card-content">{element.instituicao}</div>
       </td>
       <td>
-        <div className="treinament-card-content">
+        <div className="card-content">
           {formatarStatus(element.status)}
         </div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.vagas}</div>
+        <div className="card-content">{element.vagas}</div>
       </td>
       <td>
-        <div className="treinament-card-content">{element.subsistema}</div>
+        <div className="card-content">{element.subsistema}</div>
       </td>
       <td>
-        <div className="treinament-card-content">
+        <div className="card-content">
           {element.sad.toUpperCase()}
         </div>
       </td>
       <td>
-        <div className="treinament-card-content">
+        <div className="card-content">
           {formatarData(element.dataInicio)}
         </div>
       </td>
       <td>
-        <div className="treinament-card-content">
+        <div className="card-content">
           {formatarData(element.dataInicio)}
         </div>
       </td>
       <td>
-        <div className="treinamento-card-buttons">
+        <div className="card-buttons">
           <Link to={`/sgc/treinamento/visualizar/${element.id}`}>
             <button className="act-button submit-button">
               <i className="bi bi-file-earmark-text" />

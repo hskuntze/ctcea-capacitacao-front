@@ -1,0 +1,36 @@
+.notas-grid {
+  margin: 10px 0;
+}
+
+.nota-quadrado {
+  width: 40px;
+  height: 40px;
+  background-color: rgb(208, 208, 245);
+  margin: 2px 3px;
+  border-radius: 3px;
+  box-shadow: 1px 0 10px 2px #ccc;
+  transition: background-color 0.5s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.nota-quadrado:hover {
+  background-color: rgb(180, 180, 245);
+  box-shadow: 1px 0 10px 4px #a3a3a3;
+}
+
+.nota-ruim.selecionada {
+  background-color: rgb(196, 30, 18);
+  color: #fff;
+  font-weight: 700;
+}
+
+.nota-mediana.selecionada {
+  background-color: rgb(177, 130, 0);
+  color: #fff;
+  font-weight: 700;
+}
+
+.nota-boa.selecionada {
+  background-color: rgb(28, 121, 0);
+  color: #fff;
+  font-weight: 700;
+}

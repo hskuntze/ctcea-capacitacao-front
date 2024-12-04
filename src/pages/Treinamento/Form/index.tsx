@@ -326,7 +326,7 @@ const TreinamentoForm = () => {
         dataInicio: dataInicio,
         dataFim: dataFim,
         om: {
-          codigo: formData.om
+          codigo: formData.om.codigo
         },
         brigada: formData.brigada,
         instituicao: formData.instituicao,
@@ -632,7 +632,7 @@ const TreinamentoForm = () => {
             {/* OM */}
             <div className="treinamento-input-group form-floating">
               <Controller
-                name="om"
+                name="om.codigo"
                 control={control}
                 rules={{ required: "Campo obrigatório" }}
                 render={({ field }) => (
@@ -640,7 +640,7 @@ const TreinamentoForm = () => {
                     id="om"
                     className={`form-select ${errors.om ? "is-invalid" : ""}`}
                     {...field}
-                    value={field.value?.codigo}
+                    value={field.value}
                   >
                     <option>Selecione uma OM</option>
                     {oms &&

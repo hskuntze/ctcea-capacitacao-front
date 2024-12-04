@@ -104,7 +104,7 @@ const AvaliacaoList = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text("Capacitados", 5, 20);
+    doc.text("Avaliações", 5, 20);
 
     doc.setFontSize(12);
     const yStart = 50;
@@ -216,7 +216,7 @@ const AvaliacaoList = () => {
       y += 10;
     });
 
-    doc.save("capacitados.pdf");
+    doc.save("avaliacoes.pdf");
   };
 
   const paginatedData = filteredData.slice(

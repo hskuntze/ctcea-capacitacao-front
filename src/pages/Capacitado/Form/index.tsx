@@ -22,10 +22,10 @@ type FormData = {
   instituicao: string;
   avaliacaoPratica: string;
   avaliacaoTeorica: string;
-  exigeNotaPratica: boolean;
-  exigeNotaTeorica: boolean;
-  notaPratica: number;
-  notaTeorica: number;
+  exigeNotaPratica: string;
+  exigeNotaTeorica: string;
+  notaPratica: number | null;
+  notaTeorica: number | null;
   turma: string;
   certificado: string;
   tipoCertificado: string[];
@@ -61,8 +61,11 @@ const CapacitadoForm = () => {
   const [temNotaTeorica, setTemNotaTeorica] = useState(false);
   const [temNotaPratica, setTemNotaPratica] = useState(false);
 
-  const [exigeNotaTeorica, setExigeNotaTeorica] = useState(false);
-  const [exigeNotaPratica, setExigeNotaPratica] = useState(false);
+  const [exigeNotaTeoricaValor, setExigeNotaTeoricaValor] = useState(true);
+  const [exigeNotaPraticaValor, setExigeNotaPraticaValor] = useState(true);
+
+  const [naoSeAplicaTeorica, setNaoSeAplicaTeorica] = useState(false);
+  const [naoSeAplicaPratica, setNaoSeAplicaPratica] = useState(false);
 
   const [exibeTipoCertificado, setExibeTipoCertificado] = useState(false);
 
@@ -78,10 +81,18 @@ const CapacitadoForm = () => {
     let avaliacaoPratica = formData.avaliacaoPratica === "1" ? true : false;
     let certificado = formData.certificado === "1" ? true : false;
 
-    let exigeNotaTeorica =
-      formData.exigeNotaTeorica === null ? true : formData.exigeNotaTeorica;
-    let exigeNotaPratica =
-      formData.exigeNotaPratica === null ? true : formData.exigeNotaPratica;
+    var exigeNotaTeorica = exigeNotaTeoricaValor;
+    var exigeNotaPratica = exigeNotaPraticaValor;
+
+    if (!avaliacaoTeorica) {
+      exigeNotaTeorica = false;
+      formData.notaTeorica = null;
+    }
+
+    if (!avaliacaoPratica) {
+      exigeNotaPratica = false;
+      formData.notaPratica = null;
+    }
 
     const requestParams: AxiosRequestConfig = {
       url: `${isEditing ? `/capacitados/${urlParams.id}` : "/capacitados"}`,
@@ -224,14 +235,15 @@ const CapacitadoForm = () => {
           setValue("certificado", data.certificado === true ? "1" : "0");
           setExibeTipoCertificado(data.certificado);
           setValue("email", data.email);
-          setValue("exigeNotaPratica", data.exigeNotaPratica);
-          setExigeNotaPratica(
-            data.exigeNotaPratica !== null ? data.exigeNotaPratica : false
-          );
-          setValue("exigeNotaTeorica", data.exigeNotaTeorica);
-          setExigeNotaTeorica(
-            data.exigeNotaTeorica !== null ? data.exigeNotaTeorica : false
-          );
+
+          setValue("exigeNotaTeorica", String(data.exigeNotaTeorica));
+          setExigeNotaTeoricaValor(data.exigeNotaTeorica);
+          setNaoSeAplicaTeorica(data.exigeNotaTeorica === true ? false : true);
+
+          setValue("exigeNotaPratica", String(data.exigeNotaPratica));
+          setExigeNotaPraticaValor(data.exigeNotaPratica);
+          setNaoSeAplicaPratica(data.exigeNotaPratica === true ? false : true);
+
           setValue("instituicao", data.instituicao);
           setValue("nomeCompleto", data.nomeCompleto);
           setValue("nomeGuerra", data.nomeGuerra);
@@ -314,10 +326,14 @@ const CapacitadoForm = () => {
                   <Autocomplete
                     disablePortal
                     options={todosTreinamentos}
-                    getOptionLabel={(opt) => opt.treinamento ? opt.treinamento : ""}
+                    getOptionLabel={(opt) =>
+                      opt.treinamento ? opt.treinamento : ""
+                    }
                     classes={{
                       inputRoot: `form-control input-element-root ${
-                        isSubmitted && treinamento === undefined ? "invalido" : ""
+                        isSubmitted && treinamento === undefined
+                          ? "invalido"
+                          : ""
                       }`,
                       input: "input-element-inside",
                       root: "autocomplete-root",
@@ -760,7 +776,7 @@ const CapacitadoForm = () => {
                     id="nota-teorica"
                     placeholder="Nota teórica"
                     {...register("notaTeorica", {
-                      required: exigeNotaTeorica ? false : "Campo obrigatório",
+                      required: exigeNotaTeoricaValor ? "Campo obrigatório" : false,
                       pattern: {
                         value: /^(10([.,]0{1,2})?|[0-9]([.,]\d{1,2})?)$/,
                         message:
@@ -771,16 +787,26 @@ const CapacitadoForm = () => {
                         setValue("notaTeorica", value);
                       },
                     })}
-                    disabled={exigeNotaTeorica}
+                    disabled={exigeNotaTeoricaValor === false ? true : false}
                   />
                   <label htmlFor="nota-teorica">Nota teórica</label>
                   <div className="form-check nota-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="exige-nota-teorica"
-                      {...register("exigeNotaTeorica")}
-                      onClick={() => setExigeNotaTeorica(!exigeNotaTeorica)}
+                    <Controller
+                      name="exigeNotaTeorica"
+                      control={control}
+                      render={({ field }) => (
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="exige-nota-teorica"
+                          {...field}
+                          checked={naoSeAplicaTeorica}
+                          onChange={(e) => {
+                            setExigeNotaTeoricaValor(!e.target.checked); // Atualiza o estado local
+                            setNaoSeAplicaTeorica(e.target.checked);
+                          }}
+                        />
+                      )}
                     />
                     <label
                       className="form-check-label"
@@ -866,7 +892,7 @@ const CapacitadoForm = () => {
                     id="nota-pratica"
                     placeholder="Nota prática"
                     {...register("notaPratica", {
-                      required: exigeNotaPratica ? false : "Campo obrigatório",
+                      required: exigeNotaPraticaValor ? "Campo obrigatório" : false,
                       pattern: {
                         value: /^(10(\.0{1,2})?|[0-9](\.\d{1,2})?)$/,
                         message:
@@ -877,16 +903,26 @@ const CapacitadoForm = () => {
                         setValue("notaPratica", value);
                       },
                     })}
-                    disabled={exigeNotaPratica}
+                    disabled={exigeNotaPraticaValor === false ? true : false}
                   />
                   <label htmlFor="nota-pratica">Nota prática</label>
                   <div className="form-check nota-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="exige-nota-pratica"
-                      {...register("exigeNotaPratica")}
-                      onClick={() => setExigeNotaPratica(!exigeNotaPratica)}
+                    <Controller
+                      name="exigeNotaPratica"
+                      control={control}
+                      render={({ field }) => (
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="exige-nota-pratica"
+                          {...field}
+                          checked={naoSeAplicaPratica}
+                          onChange={(e) => {
+                            setExigeNotaPraticaValor(!e.target.checked); // Atualiza o estado local
+                            setNaoSeAplicaPratica(e.target.checked);
+                          }}
+                        />
+                      )}
                     />
                     <label
                       className="form-check-label"

@@ -147,6 +147,9 @@ const AvaliacaoForm = () => {
           setValue("questoesClaras", String(data.questoesClaras));
           setValue("questoesRelacionadas", String(data.questoesRelacionadas));
 
+          setValue("nomeResponsavel", data.nomeResponsavel);
+          setValue("funcaoResponsavel", data.funcaoResponsavel);
+
           let treinamento = data.treinamento as TreinamentoType;
           setTreinamento(treinamento);
           setValue("treinamento", treinamento);

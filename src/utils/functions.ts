@@ -39,6 +39,21 @@ export const formatarStatus = (stt: number) => {
 };
 
 /**
+ * Função que interpreta o status baseado no seu id e retorna o valor
+ * @param stt - String
+ * @returns status - Number
+ */
+export const formatarInversoStatus = (stt: string): number => {
+  const status: { [key: string]: number } = {
+    "Cancelada": 1,
+    "Realizada": 2,
+    "Adiada": 3,
+  };
+
+  return status[stt] || -1;
+};
+
+/**
  * Função que interpreta a modalidade baseado no seu id e retorna o valor
  * @param stt - Number
  * @returns status - String

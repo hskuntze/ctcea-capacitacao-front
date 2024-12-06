@@ -4,7 +4,7 @@ import "./styles.css";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
@@ -58,7 +58,9 @@ const TreinamentoForm = () => {
   const [oms, setOms] = useState<OM[]>();
   const [bdas, setBdas] = useState<string[]>();
   const [materialFiles, setMaterialFiles] = useState<MaterialDidatico[]>([]);
-  const [logisticaFiles, setLogisticaFiles] = useState<LogisticasTreinamento[]>([]);
+  const [logisticaFiles, setLogisticaFiles] = useState<LogisticasTreinamento[]>(
+    []
+  );
 
   const {
     register,
@@ -66,10 +68,13 @@ const TreinamentoForm = () => {
     handleSubmit,
     control,
     setValue,
+    setError,
+    clearErrors,
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       dataInicio: dayjs(),
-      dataFim: dayjs(),
+      dataFim: dayjs().add(1, "day"),
       instrutores: isEditing ? [] : [{ nome: "", email: "", contato: "" }],
       turmas: isEditing ? [] : [{ nome: "" }],
     },
@@ -92,6 +97,9 @@ const TreinamentoForm = () => {
     control,
     name: "turmas",
   });
+
+  const diw = watch("dataInicio");
+  const dfw = watch("dataFim");
 
   const urlParams = useParams();
   const navigate = useNavigate();
@@ -326,7 +334,7 @@ const TreinamentoForm = () => {
         dataInicio: dataInicio,
         dataFim: dataFim,
         om: {
-          codigo: formData.om.codigo
+          codigo: formData.om.codigo,
         },
         brigada: formData.brigada,
         instituicao: formData.instituicao,
@@ -421,6 +429,23 @@ const TreinamentoForm = () => {
       .catch((err) => {
         toast.error("Erro ao registrar o treinamento.");
       });
+  };
+
+  const validarDatas = (
+    field: "dataInicio" | "dataFim",
+    date: dayjs.Dayjs | null
+  ) => {
+    if (field === "dataInicio" && dfw && dayjs(date).isAfter(dayjs(dfw))) {
+      setError("dataInicio", {
+        message: "Data de início deve ser menor que a 'Data fim'",
+      });
+    } else if (field === "dataFim" && diw && dayjs(date).isBefore(dayjs(diw))) {
+      setError("dataFim", {
+        message: "Data fim deve ser maior que 'Data início'",
+      });
+    } else {
+      clearErrors(field);
+    }
   };
 
   useEffect(() => {
@@ -663,7 +688,9 @@ const TreinamentoForm = () => {
             <div className="treinamento-input-group">
               {turmaFields.map((field, index) => (
                 <div key={field.nome}>
-                  <h6><b>Turma</b></h6>
+                  <h6>
+                    <b>Turma</b>
+                  </h6>
                   <div className="turma-row">
                     <div className="input-turma-group form-floating">
                       <input
@@ -852,7 +879,10 @@ const TreinamentoForm = () => {
                     <MobileDatePicker
                       {...field}
                       format="DD/MM/YYYY"
-                      onChange={(date) => field.onChange(date)}
+                      onChange={(date) => {
+                        field.onChange(date);
+                        validarDatas("dataInicio", date);
+                      }}
                       value={dayjs(field.value)}
                       label={`Data início`}
                       className="form-control"
@@ -877,7 +907,10 @@ const TreinamentoForm = () => {
                     <MobileDatePicker
                       {...field}
                       format="DD/MM/YYYY"
-                      onChange={(date) => field.onChange(date)}
+                      onChange={(date) => {
+                        field.onChange(date);
+                        validarDatas("dataFim", date);
+                      }}
                       value={dayjs(field.value)}
                       label="Data fim"
                       className="form-control"
@@ -1348,7 +1381,9 @@ const TreinamentoForm = () => {
             <div className="treinamento-input-group">
               {instrutorFields.map((field, index) => (
                 <div key={field.email}>
-                  <h6><b>Instrutor {index + 1}</b></h6>
+                  <h6>
+                    <b>Instrutor {index + 1}</b>
+                  </h6>
                   <div className="input-instrutor-group form-floating">
                     <input
                       className={`form-control ${
@@ -1425,7 +1460,14 @@ const TreinamentoForm = () => {
             </div>
           </div>
         </div>
-        <button className="button submit-button">Salvar</button>
+        <div className="form-buttons">
+          <button className="button submit-button">Salvar</button>
+          <Link to={"/sgc"}>
+            <button type="button" className="button delete-button">
+              Voltar
+            </button>
+          </Link>
+        </div>
       </form>
     </div>
   );

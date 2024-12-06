@@ -31,7 +31,6 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
           onLoad();
         })
         .catch((err) => {
-          console.log(err);
           toast.error("Erro ao deletar.");
         });
     }
@@ -70,24 +69,13 @@ const TreinamentoCard = ({ element, onLoad }: Props) => {
         </div>
       </td>
       <td>
-        <div className="card-content">{element.vagas}</div>
-      </td>
-      <td>
-        <div className="card-content">{element.subsistema}</div>
-      </td>
-      <td>
         <div className="card-content">
           {element.sad.toUpperCase()}
         </div>
       </td>
       <td>
         <div className="card-content">
-          {formatarData(element.dataInicio)}
-        </div>
-      </td>
-      <td>
-        <div className="card-content">
-          {formatarData(element.dataInicio)}
+          {formatarData(element.dataInicio)} a {formatarData(element.dataFim)}
         </div>
       </td>
       <td>

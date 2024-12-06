@@ -147,3 +147,18 @@ export const formatarStatusOcorrencia = (status: number) => {
 
   return statuses[status] || "Status de ocorrência inválido";
 };
+
+/**
+ * Função que interpreta a probabilidade de recorrência da ocorrência baseado no tipo numérico
+ * @param status 
+ * @returns status - String
+ */
+export const formatarProbabilidadeRecorrencia = (probabilidade: number) => {
+  const probabilidades: { [key: number]: string } = {
+    1: "Baixa",
+    2: "Média",
+    3: "Alta",
+  };
+
+  return probabilidades[probabilidade] || "Status de ocorrência inválido";
+};

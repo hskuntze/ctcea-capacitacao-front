@@ -2,7 +2,7 @@ import { TreinamentoType } from "types/treinamento";
 import "./styles.css";
 import { Controller, useForm } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatarData, formatarModalidade } from "utils/functions";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
@@ -46,7 +46,12 @@ const OcorrenciaForm = () => {
     handleSubmit,
     register,
     setValue,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      dataOcorrencia: dayjs(),
+      dataRegistro: dayjs(),
+    },
+  });
 
   const [isEditing, setIsEditing] = useState(false);
   const [todosTreinamentos, setTodosTreinamentos] = useState<TreinamentoType[]>(
@@ -92,11 +97,17 @@ const OcorrenciaForm = () => {
           setTreinamento(treinamento);
           setValue("treinamento", treinamento);
           setValue("treinamento.id", treinamento.id);
-          setValue("treinamento.modalidade", formatarModalidade(Number(treinamento.modalidade)));
+          setValue(
+            "treinamento.modalidade",
+            formatarModalidade(Number(treinamento.modalidade))
+          );
           setValue("treinamento.brigada", treinamento.brigada);
           setValue("treinamento.om.sigla", treinamento.om.sigla);
           setValue("treinamento.om.cidadeestado", treinamento.om.cidadeestado);
-          setValue("treinamento.dataInicio", formatarData(treinamento.dataInicio));
+          setValue(
+            "treinamento.dataInicio",
+            formatarData(treinamento.dataInicio)
+          );
           setValue("treinamento.dataFim", formatarData(treinamento.dataFim));
 
           setValue("titulo", data.titulo);
@@ -130,12 +141,15 @@ const OcorrenciaForm = () => {
           setValue("nomeResponsavelOcorrencia", data.nomeResponsavelOcorrencia);
           setValue("nomeResponsavelSolucao", data.nomeResponsavelSolucao);
           setValue("observacoesGerais", data.observacoesGerais);
-          setValue("probabilidadeRecorrencia", String(data.probabilidadeRecorrencia));
+          setValue(
+            "probabilidadeRecorrencia",
+            String(data.probabilidadeRecorrencia)
+          );
           setValue("solucaoAdotada", data.solucaoAdotada);
           setValue("statusClassificacao", String(data.statusClassificacao));
           setStatusClassificacao(data.statusClassificacao);
           setValue("tipoOcorrencia", String(data.tipoOcorrencia));
-          if(data.tipoOcorrencia === 5) {
+          if (data.tipoOcorrencia === 5) {
             setTipoOutros(true);
           }
         })
@@ -237,10 +251,14 @@ const OcorrenciaForm = () => {
                   <Autocomplete
                     disablePortal
                     options={todosTreinamentos}
-                    getOptionLabel={(opt) => opt.treinamento ? opt.treinamento : ""}
+                    getOptionLabel={(opt) =>
+                      opt.treinamento ? opt.treinamento : ""
+                    }
                     classes={{
                       inputRoot: `form-control input-element-root ${
-                        isSubmitted && treinamento === undefined ? "invalido" : ""
+                        isSubmitted && treinamento === undefined
+                          ? "invalido"
+                          : ""
                       }`,
                       input: "input-element-inside",
                       root: "autocomplete-root",
@@ -1042,7 +1060,14 @@ const OcorrenciaForm = () => {
             </div>
           </div>
         </div>
-        <button className="button submit-button">Salvar</button>
+        <div className="form-buttons">
+          <button className="button submit-button">Salvar</button>
+          <Link to={"/sgc"}>
+            <button type="button" className="button delete-button">
+              Voltar
+            </button>
+          </Link>
+        </div>
       </form>
     </div>
   );

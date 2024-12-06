@@ -3,7 +3,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AvaliacaoType } from "types/avaliacao";
 import { TreinamentoType } from "types/treinamento";
@@ -44,6 +44,8 @@ const AvaliacaoForm = () => {
     []
   );
 
+  const navigate = useNavigate();
+
   const urlParams = useParams<UrlParams>();
 
   const onSubmit = (formData: FormData) => {
@@ -67,14 +69,14 @@ const AvaliacaoForm = () => {
     };
 
     requestBackend(requestParams)
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         toast.success(
           `Sucesso ao ${isEditing ? "atualizar" : "registrar"} a avaliação`
         );
+
+        navigate("/sgc/avaliacao");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         toast.error(
           `Erro ao ${isEditing ? "atualizar" : "registrar"} a avaliação`
         );
@@ -893,7 +895,14 @@ const AvaliacaoForm = () => {
             </div>
           </div>
         </div>
-        <button className="button submit-button">Salvar</button>
+        <div className="form-buttons">
+          <button className="button submit-button">Salvar</button>
+          <Link to={"/sgc"}>
+            <button type="button" className="button delete-button">
+              Voltar
+            </button>
+          </Link>
+        </div>
       </form>
     </div>
   );

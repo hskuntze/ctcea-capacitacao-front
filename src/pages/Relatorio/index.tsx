@@ -245,10 +245,8 @@ const Relatorio = () => {
             ))}
         </select>
         <select
-          value={statusInput ? statusInput : "-1"}
-          onChange={(e) =>
-            setStatusInput(formatarInversoStatus(e.currentTarget.value))
-          }
+          value={statusInput ? formatarStatus(statusInput) : "-1"}
+          onChange={(e) => setStatusInput(formatarInversoStatus(e.currentTarget.value))}
           name="status-options"
           id="status-options"
           className="form-select"

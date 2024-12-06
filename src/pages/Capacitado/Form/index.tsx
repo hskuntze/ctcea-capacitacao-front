@@ -3,7 +3,7 @@ import "./styles.css";
 import { TreinamentoType } from "types/treinamento";
 import { Posto } from "types/posto";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { CapacitadoType } from "types/capacitado";
@@ -546,6 +546,11 @@ const CapacitadoForm = () => {
                     placeholder="Celular"
                     {...register("celular", {
                       required: "Campo obrigatório",
+                      pattern: {
+                        value: /^[0-9()+\-.\s]+$/,
+                        message:
+                          "Telefone inválido. Use apenas números e os símbolos + ( ) - .",
+                      },
                     })}
                   />
                   <label htmlFor="celular">Telefone</label>
@@ -776,7 +781,9 @@ const CapacitadoForm = () => {
                     id="nota-teorica"
                     placeholder="Nota teórica"
                     {...register("notaTeorica", {
-                      required: exigeNotaTeoricaValor ? "Campo obrigatório" : false,
+                      required: exigeNotaTeoricaValor
+                        ? "Campo obrigatório"
+                        : false,
                       pattern: {
                         value: /^(10([.,]0{1,2})?|[0-9]([.,]\d{1,2})?)$/,
                         message:
@@ -892,7 +899,9 @@ const CapacitadoForm = () => {
                     id="nota-pratica"
                     placeholder="Nota prática"
                     {...register("notaPratica", {
-                      required: exigeNotaPraticaValor ? "Campo obrigatório" : false,
+                      required: exigeNotaPraticaValor
+                        ? "Campo obrigatório"
+                        : false,
                       pattern: {
                         value: /^(10(\.0{1,2})?|[0-9](\.\d{1,2})?)$/,
                         message:
@@ -1086,7 +1095,14 @@ const CapacitadoForm = () => {
             </div>
           </div>
         </div>
-        <button className="button submit-button">Salvar</button>
+        <div className="form-buttons">
+          <button className="button submit-button">Salvar</button>
+          <Link to={"/sgc"}>
+            <button type="button" className="button delete-button">
+              Voltar
+            </button>
+          </Link>
+        </div>
       </form>
     </div>
   );

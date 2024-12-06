@@ -4,7 +4,6 @@ import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 
 interface Props {
   element: User;
@@ -12,10 +11,6 @@ interface Props {
 }
 
 const UsuarioCard = ({ element, onLoad }: Props) => {
-  useEffect(() => {
-    console.log(element);
-  }, [element]);
-
   const deleteElement = (id: number) => {
     let confirm = window.confirm(
       "Você tem certeza que deseja deletar esse elemento?"

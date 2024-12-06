@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import "./styles.css";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Posto } from "types/posto";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
@@ -62,7 +62,6 @@ const UsuarioForm = () => {
 
     requestBackend(requestParams)
       .then((res) => {
-        console.log(res.data);
         toast.success(
           `Sucesso ao ${isEditing ? "atualizar" : "registrar"} o usuário`
         );
@@ -109,7 +108,6 @@ const UsuarioForm = () => {
         .then((res) => {
           let data = res.data as User;
 
-          console.log(data);
           setValue("email", data.email);
           setValue("identidade", data.identidade);
           setValue("instituicao", data.instituicao);
@@ -239,6 +237,19 @@ const UsuarioForm = () => {
                   <input
                     type="text"
                     className={`form-control`}
+                    id="instituicao"
+                    placeholder="Nome"
+                    {...register("instituicao")}
+                  />
+                  <label htmlFor="instituicao">Instituição</label>
+                  <div className="invalid-feedback d-block">
+                    {errors.instituicao?.message}
+                  </div>
+                </div>
+                <div className="treinamento-input-group form-floating">
+                  <input
+                    type="text"
+                    className={`form-control`}
                     id="identidade"
                     placeholder="Identidade"
                     {...register("identidade")}
@@ -340,7 +351,14 @@ const UsuarioForm = () => {
             <Loader />
           </div>
         ) : (
-          <button className="button submit-button">Salvar</button>
+          <div className="form-buttons">
+            <button className="button submit-button">Salvar</button>
+            <Link to={"/sgc"}>
+              <button type="button" className="button delete-button">
+                Voltar
+              </button>
+            </Link>
+          </div>
         )}
       </form>
     </div>

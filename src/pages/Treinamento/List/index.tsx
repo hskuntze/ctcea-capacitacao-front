@@ -16,6 +16,7 @@ import {
   formatarTipo,
 } from "utils/functions";
 import { TablePagination } from "@mui/material";
+import { toast } from "react-toastify";
 
 const TreinamentoList = () => {
   const [treinamentos, setTreinamentos] = useState<TreinamentoType[]>([]);
@@ -38,7 +39,7 @@ const TreinamentoList = () => {
         setTreinamentos(res.data as TreinamentoType[]);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao tentar resgatar os treinamentos.");
       })
       .finally(() => {
         setLoading(false);
@@ -73,13 +74,17 @@ const TreinamentoList = () => {
       t.treinamento.toLowerCase().includes(searchTerm) ||
       (t.descricaoAtividade.toLowerCase().includes(searchTerm) ?? false) ||
       (t.material.toLowerCase().includes(searchTerm) ?? false) ||
-      (t.brigada.toLowerCase().includes(searchTerm) ?? false) || 
+      (t.brigada.toLowerCase().includes(searchTerm) ?? false) ||
       (t.om.sigla.toLowerCase().includes(searchTerm) ?? false) ||
       (t.sad.toLowerCase().includes(searchTerm) ?? false) ||
-      (formatarData(t.dataInicio).toLowerCase().includes(searchTerm) ?? false) || 
+      (formatarData(t.dataInicio).toLowerCase().includes(searchTerm) ??
+        false) ||
       (formatarData(t.dataFim).toLowerCase().includes(searchTerm) ?? false) ||
       (formatarStatus(t.status).toLowerCase().includes(searchTerm) ?? false) ||
-      (formatarModalidade(Number(t.modalidade)).toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarModalidade(Number(t.modalidade))
+        .toLowerCase()
+        .includes(searchTerm) ??
+        false) ||
       (t.subsistema.toLowerCase().includes(searchTerm) ?? false) ||
       (t.instituicao.toLowerCase().includes(searchTerm) ?? false) ||
       (formatarTipo(t.tipo).toLowerCase().includes(searchTerm) ?? false) ||
@@ -95,18 +100,35 @@ const TreinamentoList = () => {
   const handleExportToExcel = () => {
     if (filteredData) {
       const treinamentoProcessado = filteredData.map((t) => ({
-        ...t,
-        avaliacaoPratica: t.avaliacaoPratica === true ? "Sim" : "Não",
-        avaliacaoTeorica: t.avaliacaoTeorica === true ? "Sim" : "Não",
-        certificado: t.certificado === true ? "Sim" : "Não",
-        nivelamento: t.nivelamento === true ? "Sim" : "Não",
-        publicoAlvo: formatarPublicoAlvo(t.publicoAlvo),
-        dataInicio: formatarData(t.dataInicio),
-        dataFim: formatarData(t.dataFim),
-        status: formatarStatus(t.status),
-        tipo: formatarTipo(t.tipo),
-        modalidade: formatarModalidade(Number(t.modalidade)),
-        executor: t.executor === 1 ? "EB" : "Empresa",
+        ID: t.id,
+        SAD: t.sad.toUpperCase(),
+        Treinamento: t.treinamento,
+        Tipo: formatarTipo(t.tipo),
+        "Material/equipamento": t.material,
+        Status: formatarStatus(t.status),
+        Brigada: t.brigada,
+        OM: t.om.sigla,
+        Turmas: t.turmas.map((tm) => `${tm.nome}`).join("; "),
+        Conjunto: t.subsistema,
+        "Data início": formatarData(t.dataInicio),
+        "Data fim": formatarData(t.dataFim),
+        Modalidade: formatarModalidade(Number(t.modalidade)),
+        Executor: t.executor === 1 ? "EB" : "Empresa",
+        Vagas: t.vagas,
+        "Descrição da atividade": t.descricaoAtividade,
+        "Público alvo": formatarPublicoAlvo(t.publicoAlvo),
+        "Carga horária": t.cargaHoraria,
+        "Pré-requisitos": t.preRequisitos,
+        Nivelamento: t.nivelamento === true ? "Sim" : "Não",
+        "Nome do curso de nivelamento": t.descNivelamento,
+        "Logística de treinamento": t.logisticaTreinamento,
+        "Avaliação prática": t.avaliacaoPratica === true ? "Sim" : "Não",
+        "Avaliação teórica": t.avaliacaoTeorica === true ? "Sim" : "Não",
+        Certificado: t.certificado === true ? "Sim" : "Não",
+        "Nome dos instrutores": t.instrutores.map((i) => `${i.nome}`).join("; "),
+        "E-mail dos instrutores": t.instrutores.map((i) => `${i.email}`).join("; "),
+        "Contato dos instrutores": t.instrutores.map((i) => `${i.contato}`).join("; "),
+        Observações: t.observacoes,
       }));
 
       const ws = XLSX.utils.json_to_sheet(treinamentoProcessado);
@@ -121,14 +143,14 @@ const TreinamentoList = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text("Treinamentos", 5, 20);
+    doc.text("Treinamentos", 15, 20);
 
     doc.setFontSize(12);
     const yStart = 30;
     let y = yStart;
     const lineHeight = 10;
     const marginLeft = 15;
-    const colWidth = 50;
+    const colWidth = 60;
 
     filteredData?.forEach((t, i) => {
       doc.setFont("helvetica", "bold");
@@ -136,12 +158,27 @@ const TreinamentoList = () => {
       y += lineHeight;
 
       const data = [
+        ["ID", String(t.id)],
+        ["SAD", t.sad.toUpperCase()],
         ["Tipo", formatarTipo(t.tipo)],
-        ["Material", t.material],
+        ["Material/equipamento", t.material],
+        ["Status", formatarTipo(t.tipo)],
+        ["Brigada", t.brigada],
+        ["OM", t.om.sigla],
+        ["Turmas", t.turmas.map((tm) => `${tm.nome}`).join("; ")],
+        ["Conjunto", t.subsistema],
         ["Data Início", formatarData(t.dataInicio)],
         ["Data Fim", formatarData(t.dataFim)],
+        ["Modalidade", formatarModalidade(Number(t.modalidade))],
+        ["Executor", t.executor === 1 ? "EB" : "Empresa"],
         ["Vagas", String(t.vagas)],
-        ["Status", formatarTipo(t.tipo)],
+        ["Descrição da atividade", t.descricaoAtividade],
+        ["Público Alvo", formatarPublicoAlvo(t.publicoAlvo)],
+        ["Carga Horária", String(t.cargaHoraria)],
+        ["Pré-Requisitos", t.preRequisitos],
+        ["Nivelamento", String(t.nivelamento)],
+        ["Nome do curso de nivelamento", t.descNivelamento],
+        ["Logística do treinamento", t.logisticaTreinamento],
         [
           "Avaliação Prática",
           String(t.avaliacaoPratica) === "1" ? "Sim" : "Não",
@@ -151,20 +188,17 @@ const TreinamentoList = () => {
           String(t.avaliacaoTeorica) === "1" ? "Sim" : "Não",
         ],
         ["Certificado", String(t.certificado) === "1" ? "Sim" : "Não"],
-        ["Logística do t", t.logisticaTreinamento],
-        ["Nivelamento", String(t.nivelamento)],
-        ["Carga Horária", String(t.cargaHoraria)],
-        ["Público Alvo", formatarPublicoAlvo(t.publicoAlvo)],
-        ["Descrição da Atividade", t.descricaoAtividade],
+        ["Nome dos instrutores", t.instrutores.map((inst) => `${inst.nome}`).join("; ")],
+        ["E-mail dos instrutores", t.instrutores.map((inst) => `${inst.email}`).join("; ")],
+        ["Contato dos instrutores", t.instrutores.map((inst) => `${inst.contato}`).join("; ")],
         ["Observações", t.observacoes],
-        ["Pré-Requisitos", t.preRequisitos],
       ];
 
       data.forEach(([k, v]) => {
         doc.setFont("helvetica", "bold");
         doc.text(k, marginLeft, y);
         doc.setFont("helvetica", "normal");
-        doc.text(v, marginLeft + colWidth, y);
+        doc.text(v, 25 + colWidth, y);
         y += lineHeight;
 
         if (y > 270) {
@@ -242,11 +276,8 @@ const TreinamentoList = () => {
                 <th scope="col">Executor</th>
                 <th scope="col">Instituição</th>
                 <th scope="col">Status</th>
-                <th scope="col">Vagas</th>
-                <th scope="col">Subsistema</th>
                 <th scope="col">SAD</th>
-                <th scope="col">Data início</th>
-                <th scope="col">Data fim</th>
+                <th scope="col">Período</th>
                 <th scope="col">Ações</th>
               </tr>
             </thead>

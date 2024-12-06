@@ -6,6 +6,7 @@ import { requestBackend } from "utils/requests";
 import { TreinamentoType } from "types/treinamento";
 import Loader from "components/Loader";
 import { formatarData } from "utils/functions";
+import { toast } from "react-toastify";
 
 const TreinamentoInspect = () => {
   const urlParams = useParams();
@@ -27,7 +28,7 @@ const TreinamentoInspect = () => {
         setTreinamento(res.data as TreinamentoType);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao tentar resgatar os dados do treinamento.");
       })
       .finally(() => {
         setLoading(false);

@@ -312,6 +312,13 @@
   text-transform: uppercase;
 }
 
+.form-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
 @media (min-width: 768px) {
   .inspect-content span {
     margin: 4px 0;

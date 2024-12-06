@@ -6,6 +6,7 @@ import { requestBackend } from "utils/requests";
 import { CapacitadoType } from "types/capacitado";
 import Loader from "components/Loader";
 import { formatarData, formatarModalidade } from "utils/functions";
+import { toast } from "react-toastify";
 
 const CapacitacaoInspect = () => {
   const urlParams = useParams();
@@ -27,7 +28,7 @@ const CapacitacaoInspect = () => {
         setCapacitado(res.data as CapacitadoType);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao resgatar os dados do capacitado.");
       })
       .finally(() => {
         setLoading(false);
@@ -56,7 +57,7 @@ const CapacitacaoInspect = () => {
           <span>
             <b>Instituição/Organização:</b> {capacitado?.instituicao}
           </span>
-          {capacitado?.tipo === 2 && (
+          {capacitado?.tipo === 1 && (
             <>
               <span>
                 <b>Nome de guerra:</b> {capacitado?.nomeGuerra}

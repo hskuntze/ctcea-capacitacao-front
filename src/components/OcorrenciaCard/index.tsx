@@ -4,6 +4,7 @@ import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
 import { OcorrenciaType } from "types/ocorrencia";
+import { formatarData, formatarStatusOcorrencia } from "utils/functions";
 
 interface Props {
   element: OcorrenciaType;
@@ -30,7 +31,6 @@ const OcorrenciaCard = ({ element, onLoad }: Props) => {
           onLoad();
         })
         .catch((err) => {
-          console.log(err);
           toast.error("Erro ao deletar.");
         });
     }
@@ -40,6 +40,18 @@ const OcorrenciaCard = ({ element, onLoad }: Props) => {
     <tr className="card-container">
       <td>
         <div className="card-content">{element.titulo}</div>
+      </td>
+      <td>
+        <div className="card-content">{element.treinamento.treinamento}</div>
+      </td>
+      <td>
+        <div className="card-content">{formatarData(element.dataOcorrencia)}</div>
+      </td>
+      <td>
+        <div className="card-content">{formatarStatusOcorrencia(element.statusClassificacao)}</div>
+      </td>
+      <td>
+        <div className="card-content">{element.nomeResponsavelOcorrencia}</div>
       </td>
       <td>
         <div className="card-buttons">

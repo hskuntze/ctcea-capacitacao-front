@@ -31,7 +31,6 @@ const CapacitadoCard = ({ element, onLoad }: Props) => {
           onLoad();
         })
         .catch((err) => {
-          console.log(err);
           toast.error("Erro ao deletar.");
         });
     }

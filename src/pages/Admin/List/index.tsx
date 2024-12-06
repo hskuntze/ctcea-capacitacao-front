@@ -8,6 +8,8 @@ import Loader from "components/Loader";
 import UsuarioCard from "components/UsuarioCard";
 import { TablePagination } from "@mui/material";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
 
 const UsuarioList = () => {
   const [loading, setLoading] = useState(false);
@@ -54,6 +56,80 @@ const UsuarioList = () => {
     ? usuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : [];
 
+  const handleExportToExcel = () => {
+    if (paginatedData) {
+      const capacitadosProcessado = paginatedData.map((u) => ({
+        Nome: u.nome,
+        Sobrenome: u.sobrenome,
+        "Nome de guerra": u.nomeGuerra,
+        "OM/Instituição": u.instituicao,
+        "Identidade": u.identidade,
+        "E-mail": u.email,
+        "Telefone": u.telefone,
+        "Perfis": u.perfis.map((p) => `${p.autorizacao}`).join("; "),
+        "Posto": u.posto ? u.posto.titulo : "",
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(capacitadosProcessado);
+      const wb = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(wb, ws, "Usuários");
+      XLSX.writeFile(wb, "usuários.xlsx");
+    }
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Usuarios", 5, 20);
+
+    doc.setFontSize(12);
+    const yStart = 30;
+    let y = yStart;
+    const lineHeight = 10;
+    const marginLeft = 15;
+    const colWidth = 50;
+
+    paginatedData?.forEach((u, i) => {
+      doc.setFont("helvetica", "bold");
+      doc.text(u.nome, marginLeft, y);
+      y += lineHeight;
+
+      let perfis = u.perfis.map((p) => `${p.autorizacao}`).join("; ");
+      let posto = u.posto ? u.posto.titulo : "";
+
+      const data = [
+        ["Nome", u.nome],
+        ["Sobrenome", u.sobrenome],
+        ["Identidade", u.identidade],
+        ["Email", u.email],
+        ["Perfis", perfis],
+        ["Nome de guerra", u.nomeGuerra ? u.nomeGuerra : ""],
+        ["OM/Instituição", u.instituicao ? u.instituicao : ""],
+        ["Telefone", u.telefone],
+        ["Posto", posto]
+      ];
+
+      data.forEach(([k, v]) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(k, marginLeft, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(v, marginLeft + colWidth, y);
+        y += lineHeight;
+
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+
+      y += 10;
+    });
+
+    doc.save("usuarios.pdf");
+  };
+
   useEffect(() => {
     loadInfo();
   }, [loadInfo]);
@@ -67,14 +143,14 @@ const UsuarioList = () => {
           </button>
         </Link>
         <button
-          //   onClick={handleExportPDF}
+          onClick={handleExportPDF}
           type="button"
           className="act-button create-button"
         >
           <i className="bi bi-filetype-pdf" />
         </button>
         <button
-          //   onClick={handleExportToExcel}
+          onClick={handleExportToExcel}
           type="button"
           className="act-button create-button"
         >

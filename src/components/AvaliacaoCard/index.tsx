@@ -1,5 +1,4 @@
 import "./styles.css";
-import { formatarData } from "utils/functions";
 import { Link } from "react-router-dom";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "utils/requests";
@@ -31,7 +30,6 @@ const AvaliacaoCard = ({ element, onLoad }: Props) => {
           onLoad();
         })
         .catch((err) => {
-          console.log(err);
           toast.error("Erro ao deletar.");
         });
     }
@@ -41,6 +39,12 @@ const AvaliacaoCard = ({ element, onLoad }: Props) => {
     <tr className="card-container">
       <td>
         <div className="card-content">{element.treinamento.treinamento}</div>
+      </td>
+      <td>
+        <div className="card-content">{element.nomeResponsavel}</div>
+      </td>
+      <td>
+        <div className="card-content">{element.avaliacaoGeralTreinamento}</div>
       </td>
       <td>
         <div className="card-buttons">

@@ -1,0 +1,70 @@
+.relatorio-filtro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
+}
+
+.relatorio-filtro .form-select {
+  height: 50px;
+  margin: 10px auto;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  color: #5e5e5e;
+  font-weight: 300;
+}
+
+.relatorio-button {
+  padding-bottom: 2px;
+  padding-left: 1px;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background-color: #ccc;
+  color: #fff;
+  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out,
+    color 0.3s ease-in-out;
+  margin: 0 8px;
+}
+
+.relatorio-button:hover {
+  background-color: #fff;
+  border: 1px solid #fff;
+  color: #b3b3b3;
+}
+
+.relatorio-export-buttons {
+  width: 50vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+  .relatorio-export-buttons {
+    width: 170px;
+    margin: 0;
+    margin-left: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .relatorio-filtro {
+    flex-direction: row;
+  }
+
+  .relatorio-filtro .form-select {
+    width: calc(100% / 6);
+  }
+}
+
+@media (min-width: 992px) {
+  .relatorio-filtro .form-select {
+    width: calc((100% - 20px) / 6);
+    margin: 0 auto;
+  }
+}

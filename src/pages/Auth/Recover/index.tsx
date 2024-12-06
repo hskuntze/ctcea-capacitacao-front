@@ -1,7 +1,7 @@
 import LogotipoSGC from "assets/images/logotipo-sgc.png";
 import { AxiosRequestConfig } from "axios";
 import Loader from "components/Loader";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -48,7 +48,6 @@ const Recover = () => {
         navigate("/sgc");
       })
       .catch((err) => {
-        console.log(err);
         toast.error("Erro ao trocar a senha.");
       })
       .finally(() => {
@@ -57,10 +56,6 @@ const Recover = () => {
   };
 
   const senha = watch("senha");
-
-  useEffect(() => {
-    console.log(urlParams.token);
-  }, [urlParams.token]);
 
   return (
     <div className="login-container">

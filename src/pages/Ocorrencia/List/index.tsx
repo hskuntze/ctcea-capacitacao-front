@@ -7,6 +7,10 @@ import { requestBackend } from "utils/requests";
 import { OcorrenciaType } from "types/ocorrencia";
 import { TablePagination } from "@mui/material";
 import OcorrenciaCard from "components/OcorrenciaCard";
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import { formatarData, formatarNivelImpacto, formatarStatusOcorrencia, formatarTipoOcorrencia } from "utils/functions";
+import { toast } from "react-toastify";
 
 const OcorrenciaList = () => {
   const [loading, setLoading] = useState(false);
@@ -29,7 +33,7 @@ const OcorrenciaList = () => {
         setOcorrencias(res.data as OcorrenciaType[]);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao tentar resgatar as ocorrências.");
       })
       .finally(() => {
         setLoading(false);
@@ -62,6 +66,83 @@ const OcorrenciaList = () => {
     return o.titulo.toLowerCase().includes(searchTerm);
   });
 
+  const handleExportToExcel = () => {
+    if (filteredData) {
+      const avaliacoesProcessado = filteredData.map((o) => ({
+        Treinamento: o.treinamento.treinamento,
+        "Data da ocorrência": formatarData(o.dataOcorrencia),
+        "Tipo da ocorrência": formatarTipoOcorrencia(o.tipoOcorrencia),
+        "Houve impacto da ocorrência": o.impactoOcorrencia === true ? "Sim" : "Não",
+        "Nível do impacto": formatarNivelImpacto(o.nivelImpacto),
+        "Descrição do impacto": o.descricaoImpacto,
+        "Status da ocorrência": formatarStatusOcorrencia(o.statusClassificacao),
+        "Probabilidade de recorrência": formatarNivelImpacto(o.probabilidadeRecorrencia),
+        "Lições aprendidas": o.descricaoLicoesAprendidas,
+        "Nome do responsável pelo levantamento da ocorrência": o.nomeResponsavelOcorrencia,
+        "Instituição do responsável pelo levantamento da ocorrência": o.instituicaoResponsavelOcorrencia,
+        "Contato do responsável pelo levantamento da ocorrência": o.contatoResponsavelOcorrencia,
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(avaliacoesProcessado);
+      const wb = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(wb, ws, "Ocorrências");
+      XLSX.writeFile(wb, "ocorrencias.xlsx");
+    }
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Ocorrências", 15, 20);
+
+    doc.setFontSize(12);
+    const yStart = 30;
+    let y = yStart;
+    const lineHeight = 10;
+    const marginLeft = 15;
+    let colWidth = 125;
+
+    filteredData?.forEach((o, i) => {
+      doc.setFont("helvetica", "bold");
+      doc.text(o.titulo, marginLeft, y);
+      y += lineHeight;
+
+      const data = [
+        ["Treinamento", o.treinamento.treinamento],
+        ["Data da ocorrência", formatarData(o.dataOcorrencia)],
+        ["Tipo de ocorrência", formatarTipoOcorrencia(o.tipoOcorrencia)],
+        ["Houve impacto da ocorrência?", o.impactoOcorrencia === true ? "Sim" : "Não"],
+        ["Nível do impacto", formatarNivelImpacto(o.nivelImpacto)],
+        ["Descrição do impacto", o.descricaoImpacto],
+        ["Status da ocorrência", formatarStatusOcorrencia(o.statusClassificacao)],
+        ["Probabilidade de recorrência", formatarNivelImpacto(o.probabilidadeRecorrencia)],
+        ["Lições aprendidas", o.descricaoLicoesAprendidas],
+        ["Nome do responsável pelo levantamento da ocorrência", o.nomeResponsavelOcorrencia],
+        ["Instituição do responsável pelo levantamento da ocorrência", o.instituicaoResponsavelOcorrencia],
+        ["Contato do responsável pelo levantamento da ocorrência", o.contatoResponsavelOcorrencia],
+      ];
+
+      data.forEach(([k, v]) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(k, marginLeft, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(v, marginLeft + colWidth, y);
+        y += lineHeight;
+
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+
+      y += 10;
+    });
+
+    doc.save("ocorrencias.pdf");
+  };
+
   const paginatedData = filteredData.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -80,14 +161,14 @@ const OcorrenciaList = () => {
           </button>
         </Link>
         <button
-          //   onClick={handleExportPDF}
+          onClick={handleExportPDF}
           type="button"
           className="act-button create-button"
         >
           <i className="bi bi-filetype-pdf" />
         </button>
         <button
-          //   onClick={handleExportToExcel}
+          onClick={handleExportToExcel}
           type="button"
           className="act-button create-button"
         >
@@ -123,6 +204,10 @@ const OcorrenciaList = () => {
             <thead className="table-head">
               <tr>
                 <th scope="col">Título</th>
+                <th scope="col">Treinamento</th>
+                <th scope="col">Data da ocorrência</th>
+                <th scope="col">Status da solução</th>
+                <th scope="col">Responsável pela ocorrência</th>
                 <th scope="col">Ações</th>
               </tr>
             </thead>

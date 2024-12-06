@@ -10,6 +10,7 @@ import CapacitadoCard from "components/CapacitadoCard";
 import { formatarData, formatarModalidade } from "utils/functions";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
+import { toast } from "react-toastify";
 
 const CapacitadoList = () => {
   const [capacitados, setCapacitados] = useState<CapacitadoType[]>([]);
@@ -32,7 +33,7 @@ const CapacitadoList = () => {
         setCapacitados(res.data as CapacitadoType[]);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao tentar resgatar os capacitados.");
       })
       .finally(() => {
         setLoading(false);
@@ -89,7 +90,28 @@ const CapacitadoList = () => {
   const handleExportToExcel = () => {
     if (filteredData) {
       const capacitadosProcessado = filteredData.map((t) => ({
-        ...t
+        ID: t.id,
+        Tipo: t.tipo === 1 ? "Militar" : "Civil",
+        "Nome completo": t.nomeCompleto,
+        "E-mail": t.email,
+        Telefone: t.celular,
+        Função: t.funcao,
+        Turma: t.turma,
+        "Nome de guerra": t.nomeGuerra,
+        Posto: t.posto ? t.posto.titulo : "",
+        "Brigada do militar": t.brigadaMilitar,
+        "OM do militar": t.instituicao,
+        "Avaliação teórica?": t.avaliacaoTeorica === true ? "Sim" : "Não",
+        "Exige nota teórica?": t.exigeNotaTeorica === true ? "Sim" : "Não",
+        "Nota teórica": t.notaTeorica,
+        "Observações da avaliação teórica": t.observacoesAvaliacaoTeorica,
+        "Avaliação prática?": t.avaliacaoPratica === true ? "Sim" : "Não",
+        "Exige nota prática?": t.exigeNotaPratica === true ? "Sim" : "Não",
+        "Nota prática": t.notaPratica,
+        "Observações da avaliação prática": t.observacoesAvaliacaoPratica,
+        "Certificado?": t.certificado === true ? "Sim" : "Não",
+        "Tipo do certificado": t.tipoCertificado ? t.tipoCertificado.map((tc) => `${tc.toUpperCase()}`).join("; ") : "",
+        "Número de BI": t.numeroBi,
       }));
 
       const ws = XLSX.utils.json_to_sheet(capacitadosProcessado);
@@ -104,7 +126,7 @@ const CapacitadoList = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text("Capacitados", 5, 20);
+    doc.text("Capacitados", 15, 20);
 
     doc.setFontSize(12);
     const yStart = 30;
@@ -126,7 +148,9 @@ const CapacitadoList = () => {
       let notaTeorica = c.notaTeorica ? String(c.notaTeorica) : "";
       let posto = c.posto ? c.posto.titulo : "";
       let brigada = c.brigadaMilitar ? c.brigadaMilitar : "";
-      let tipoCertificado = c.tipoCertificado ? c.tipoCertificado.join(", ") : "";
+      let tipoCertificado = c.tipoCertificado
+        ? c.tipoCertificado.join(", ")
+        : "";
 
       const data = [
         ["E-mail", c.email],
@@ -144,7 +168,7 @@ const CapacitadoList = () => {
         ["Exige nota teórica?", exigeNotaTeorica],
         ["Nota prática", notaPratica],
         ["Nota teórica", notaTeorica],
-        ["Tipo certificado", tipoCertificado]
+        ["Tipo certificado", tipoCertificado],
       ];
 
       data.forEach(([k, v]) => {

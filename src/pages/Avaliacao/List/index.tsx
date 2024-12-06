@@ -5,6 +5,7 @@ import Loader from "components/Loader";
 import jsPDF from "jspdf";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AvaliacaoType } from "types/avaliacao";
 import { formatarAvaliacao, formatarData } from "utils/functions";
 import { requestBackend } from "utils/requests";
@@ -31,7 +32,7 @@ const AvaliacaoList = () => {
         setAvaliacoes(res.data as AvaliacaoType[]);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Erro ao tentar resgatar as avaliações");
       })
       .finally(() => {
         setLoading(false);
@@ -82,7 +83,18 @@ const AvaliacaoList = () => {
               )
               .join("; ")
           : "Nenhum instrutor",
-        "Apostila Atualizada": formatarAvaliacao(a.apostilaAtualizada),
+        "Qualidade geral da apostila de treinamento?": formatarAvaliacao(
+          a.qualidadeMaterial
+        ),
+        "Apostila estava objetiva e clara para entendimento?":
+          formatarAvaliacao(a.apostilaObjetiva),
+        "Apostila estava atualizada e em sequência adequada?":
+          formatarAvaliacao(a.apostilaAtualizada),
+        "Questões estavam relacionadas ao conteúdo ministrados em aula?":
+          formatarAvaliacao(a.questoesRelacionadas),
+        "Questões estavam claras e abrangentes?": formatarAvaliacao(
+          a.questoesClaras
+        ),
         "Engajamento dos instrutores": a.treinamento.instrutores
           ? a.treinamento.instrutores
               .map(
@@ -90,6 +102,43 @@ const AvaliacaoList = () => {
               )
               .join("; ")
           : "",
+        "Claro e objetivo na apresentação do assunto": a.treinamento.instrutores
+          ? a.treinamento.instrutores
+              .map((i) => `${i.nome}: ${formatarAvaliacao(Number(i.clareza))}`)
+              .join("; ")
+          : "",
+        "Nível de conhecimento técnico": a.treinamento.instrutores
+          ? a.treinamento.instrutores
+              .map(
+                (i) =>
+                  `${i.nome}: ${formatarAvaliacao(Number(i.nivelConhecimento))}`
+              )
+              .join("; ")
+          : "",
+        "Capacidade de responder a perguntas": a.treinamento.instrutores
+          ? a.treinamento.instrutores
+              .map(
+                (i) =>
+                  `${i.nome}: ${formatarAvaliacao(
+                    Number(i.capacidadeResposta)
+                  )}`
+              )
+              .join("; ")
+          : "",
+        "Capacidade de gerir a aula e o tempo": a.treinamento.instrutores
+          ? a.treinamento.instrutores
+              .map(
+                (i) =>
+                  `${i.nome}: ${formatarAvaliacao(
+                    Number(i.capacidadeGerirAula)
+                  )}`
+              )
+              .join("; ")
+          : "",
+        "O curso abrangeu todos os objetivos propostos?": formatarAvaliacao(
+          a.abrangeuTodosObjetivos
+        ),
+        "Avaliação geral do treinamento": a.avaliacaoGeralTreinamento,
       }));
 
       const ws = XLSX.utils.json_to_sheet(avaliacoesProcessado);
@@ -104,10 +153,10 @@ const AvaliacaoList = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text("Capacitados", 5, 20);
+    doc.text("Avaliações", 15, 20);
 
     doc.setFontSize(12);
-    const yStart = 50;
+    const yStart = 30;
     let y = yStart;
     const lineHeight = 10;
     const marginLeft = 15;
@@ -164,39 +213,57 @@ const AvaliacaoList = () => {
           doc.setFont("helvetica", "bold");
           doc.text(`Instrutor ${index + 1}:`, marginLeft, y);
           doc.setFont("helvetica", "normal");
-          doc.text(`Nome: ${instrutor.nome}`, marginLeft + colWidthInstrutor, y);
-          y += lineHeight;
-
           doc.text(
-            `Engajamento: ${formatarAvaliacao(Number(instrutor.engajamento)) ?? "Não informado"}`,
+            `Nome: ${instrutor.nome}`,
             marginLeft + colWidthInstrutor,
             y
           );
           y += lineHeight;
 
           doc.text(
-            `Clareza: ${formatarAvaliacao(Number(instrutor.clareza)) ?? "Não informado"}`,
+            `Engajamento: ${
+              formatarAvaliacao(Number(instrutor.engajamento)) ??
+              "Não informado"
+            }`,
             marginLeft + colWidthInstrutor,
             y
           );
           y += lineHeight;
 
           doc.text(
-            `Nível de conhecimento técnico: ${formatarAvaliacao(Number(instrutor.nivelConhecimento)) ?? "Não informado"}`,
+            `Clareza: ${
+              formatarAvaliacao(Number(instrutor.clareza)) ?? "Não informado"
+            }`,
             marginLeft + colWidthInstrutor,
             y
           );
           y += lineHeight;
 
           doc.text(
-            `Capacidade de responder a perguntas: ${formatarAvaliacao(Number(instrutor.capacidadeResposta)) ?? "Não informado"}`,
+            `Nível de conhecimento técnico: ${
+              formatarAvaliacao(Number(instrutor.nivelConhecimento)) ??
+              "Não informado"
+            }`,
             marginLeft + colWidthInstrutor,
             y
           );
           y += lineHeight;
 
           doc.text(
-            `Capacidade de gerir a aula e o tempo: ${formatarAvaliacao(Number(instrutor.capacidadeGerirAula)) ?? "Não informado"}`,
+            `Capacidade de responder a perguntas: ${
+              formatarAvaliacao(Number(instrutor.capacidadeResposta)) ??
+              "Não informado"
+            }`,
+            marginLeft + colWidthInstrutor,
+            y
+          );
+          y += lineHeight;
+
+          doc.text(
+            `Capacidade de gerir a aula e o tempo: ${
+              formatarAvaliacao(Number(instrutor.capacidadeGerirAula)) ??
+              "Não informado"
+            }`,
             marginLeft + colWidthInstrutor,
             y
           );
@@ -216,7 +283,7 @@ const AvaliacaoList = () => {
       y += 10;
     });
 
-    doc.save("capacitados.pdf");
+    doc.save("avaliacoes.pdf");
   };
 
   const paginatedData = filteredData.slice(
@@ -280,6 +347,8 @@ const AvaliacaoList = () => {
             <thead className="table-head">
               <tr>
                 <th scope="col">Treinamento</th>
+                <th scope="col">Responsável pelo levantamento</th>
+                <th scope="col">Avaliação geral do treinamento</th>
                 <th scope="col">Ações</th>
               </tr>
             </thead>
@@ -290,7 +359,7 @@ const AvaliacaoList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={2}>
+                  <td colSpan={4}>
                     <div className="no-elements-on-table">
                       <span>Não existem avaliações a serem exibidas.</span>
                     </div>

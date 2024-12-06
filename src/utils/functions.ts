@@ -39,6 +39,21 @@ export const formatarStatus = (stt: number) => {
 };
 
 /**
+ * Função que interpreta o status baseado no seu id e retorna o valor
+ * @param stt - String
+ * @returns status - Number
+ */
+export const formatarInversoStatus = (stt: string): number => {
+  const status: { [key: string]: number } = {
+    "Cancelada": 1,
+    "Realizada": 2,
+    "Adiada": 3,
+  };
+
+  return status[stt] || -1;
+};
+
+/**
  * Função que interpreta a modalidade baseado no seu id e retorna o valor
  * @param stt - Number
  * @returns status - String
@@ -70,7 +85,7 @@ export const formatarPublicoAlvo = (publicoAlvo: number) => {
 
 /**
  * Função que interpreta a avaliação baseado no valor da nota
- * @param nota 
+ * @param nota
  * @returns avaliação - String
  */
 export const formatarAvaliacao = (nota: number) => {
@@ -83,4 +98,67 @@ export const formatarAvaliacao = (nota: number) => {
   };
 
   return avaliacoes[nota] || "Nota inválida";
+};
+
+/**
+ * Função que interpreta o tipo de ocorrência baseado no tipo numérico
+ * @param tipo 
+ * @returns tipo - String
+ */
+export const formatarTipoOcorrencia = (tipo: number) => {
+  const tipos: { [key: number]: string } = {
+    1: "Logística",
+    2: "Técnica",
+    3: "Organizacional",
+    4: "Didática",
+    5: "Outros",
+  };
+
+  return tipos[tipo] || "Tipo de ocorrência inválida";
+};
+
+/**
+ * Função que interpreta o nível do impacto baseado no tipo numérico
+ * @param nivel 
+ * @returns nivel - String
+ */
+export const formatarNivelImpacto = (nivel: number) => {
+  const niveis: { [key: number]: string } = {
+    1: "Baixo",
+    2: "Médio",
+    3: "Alto",
+  };
+
+  return niveis[nivel] || "Nível de impacto inválido";
+};
+
+/**
+ * Função que interpreta o status da ocorrência baseado no tipo numérico
+ * @param status 
+ * @returns status - String
+ */
+export const formatarStatusOcorrencia = (status: number) => {
+  const statuses: { [key: number]: string } = {
+    1: "Solucionado",
+    2: "Em análise",
+    3: "Pendente",
+    4: "Não se aplica",
+  };
+
+  return statuses[status] || "Status de ocorrência inválido";
+};
+
+/**
+ * Função que interpreta a probabilidade de recorrência da ocorrência baseado no tipo numérico
+ * @param status 
+ * @returns status - String
+ */
+export const formatarProbabilidadeRecorrencia = (probabilidade: number) => {
+  const probabilidades: { [key: number]: string } = {
+    1: "Baixa",
+    2: "Média",
+    3: "Alta",
+  };
+
+  return probabilidades[probabilidade] || "Status de ocorrência inválido";
 };

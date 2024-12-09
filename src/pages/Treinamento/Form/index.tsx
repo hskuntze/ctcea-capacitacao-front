@@ -1461,7 +1461,7 @@ const TreinamentoForm = () => {
           </div>
         </div>
         <div className="form-buttons">
-          <button className="button submit-button">Salvar</button>
+          <button type="submit" className="button submit-button">Salvar</button>
           <Link to={"/sgc"}>
             <button type="button" className="button delete-button">
               Voltar

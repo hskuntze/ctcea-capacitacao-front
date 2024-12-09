@@ -1,0 +1,8 @@
+.relatorio-chart {
+  background-color: #fff;
+  width: 410px;
+  height: 410px;
+  margin: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 0 10px 5px #ccc;
+}

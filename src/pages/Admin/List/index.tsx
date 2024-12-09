@@ -67,7 +67,7 @@ const UsuarioList = () => {
         "E-mail": u.email,
         "Telefone": u.telefone,
         "Perfis": u.perfis.map((p) => `${p.autorizacao}`).join("; "),
-        "Posto": u.posto ? u.posto.titulo : "",
+        "Posto/graduação": u.posto ? u.posto.titulo : "",
       }));
 
       const ws = XLSX.utils.json_to_sheet(capacitadosProcessado);

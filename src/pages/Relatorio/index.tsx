@@ -13,6 +13,9 @@ import { useForm } from "react-hook-form";
 import { TablePagination } from "@mui/material";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
+import ColumnChart from "components/ColumnChart";
+import { TreinamentoPorStatus } from "types/relatorio/treinamentoPorStatus";
+import { TreinamentoPorOM } from "types/relatorio/treinamentoPorOm";
 
 const Relatorio = () => {
   const { handleSubmit } = useForm();
@@ -34,6 +37,14 @@ const Relatorio = () => {
   const [siglaInput, setSiglaInput] = useState<string | null>(null);
   const [brigadaInput, setBrigadaInput] = useState<string | null>(null);
   const [statusInput, setStatusInput] = useState<number | null>(null);
+
+  const [treinamentosPorStatus, setTreinamentosPorStatus] = useState<
+    TreinamentoPorStatus[]
+  >([]);
+
+  const [treinamentosPorOm, setTreinamentosPorOm] = useState<
+    TreinamentoPorOM[]
+  >([]);
 
   const handlePageChange = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -123,6 +134,38 @@ const Relatorio = () => {
     doc.save("relatorio.pdf");
   };
 
+  const loadRelatorioTreinamentoPorStatus = () => {
+    const requestParams: AxiosRequestConfig = {
+      url: "/relatorios/treinamentos/por-status",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestParams)
+      .then((res) => {
+        setTreinamentosPorStatus(res.data as TreinamentoPorStatus[]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const loadRelatorioTreinamentoPorOm = () => {
+    const requestParams: AxiosRequestConfig = {
+      url: "/relatorios/treinamentos/por-om",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestParams)
+      .then((res) => {
+        setTreinamentosPorOm(res.data as TreinamentoPorOM[]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const loadInfo = useCallback(() => {
     let t = treinamentoInput === null ? "" : treinamentoInput;
     let c = capacitadoInput === null ? "" : capacitadoInput;
@@ -193,6 +236,8 @@ const Relatorio = () => {
 
   useEffect(() => {
     loadInfo();
+    loadRelatorioTreinamentoPorStatus();
+    loadRelatorioTreinamentoPorOm();
   }, [loadInfo]);
 
   return (
@@ -246,7 +291,9 @@ const Relatorio = () => {
         </select>
         <select
           value={statusInput ? formatarStatus(statusInput) : "-1"}
-          onChange={(e) => setStatusInput(formatarInversoStatus(e.currentTarget.value))}
+          onChange={(e) =>
+            setStatusInput(formatarInversoStatus(e.currentTarget.value))
+          }
           name="status-options"
           id="status-options"
           className="form-select"
@@ -335,6 +382,20 @@ const Relatorio = () => {
             <i className="bi bi-file-earmark-excel" />
           </button>
         </div>
+      </div>
+      <div className="graficos-relatorio">
+        <ColumnChart
+          data={treinamentosPorStatus.map((item) => item.quantidade)}
+          labels={treinamentosPorStatus.map((item) => item.descStatus)}
+          title="Quantidade de treinamento por status"
+          colors={["#6EF06F"]}
+        />
+        <ColumnChart
+          data={treinamentosPorOm.map((item) => item.quantidade)}
+          labels={treinamentosPorOm.map((item) => item.siglaOM)}
+          title="Quantidade de treinamento por OM"
+          colors={["#6EC4F0"]}
+        />
       </div>
     </div>
   );

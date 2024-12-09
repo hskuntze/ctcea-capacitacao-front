@@ -10,6 +10,8 @@ import { requestBackendLogin } from "utils/requests";
 import { saveAuthData } from "utils/storage";
 
 import LogotipoSGC from "assets/images/logotipo-sgc.png";
+import LogotipoCTCEA from "assets/images/logo_ctcea.png";
+import LogotipoSISFRON from "assets/images/corujinhaLoginEb.png";
 import Loader from "components/Loader";
 import { toast } from "react-toastify";
 
@@ -67,7 +69,7 @@ const Login = () => {
               type="text"
               id="login-username"
               placeholder="Nome de usuário"
-              className="input-element"
+              className="input-element login-input"
               {...register("username", {
                 required: "Campo obrigatório",
               })}
@@ -81,7 +83,7 @@ const Login = () => {
               type="password"
               id="login-password"
               placeholder="Senha"
-              className="input-element"
+              className="input-element login-input"
               {...register("password", {
                 required: "Campo obrigatório",
               })}
@@ -99,6 +101,10 @@ const Login = () => {
               </button>
             </>
           )}
+        </div>
+        <div className="login-logos">
+          <img src={LogotipoSISFRON} className="logotipo-sisfron" alt="Logotipo SISFRON" />
+          <img src={LogotipoCTCEA} className="logotipo-ctcea" alt="Logotipo SISFRON" />
         </div>
       </form>
       <Link to="/sgc/enviaremail">

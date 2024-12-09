@@ -77,11 +77,6 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/sgc/ocorrencia">
-                    Ocorrências
-                  </Link>
-                </li>
-                <li className="nav-item">
                   <Link className="nav-link" to="/sgc/capacitado">
                     Capacitados
                   </Link>
@@ -94,6 +89,11 @@ const Navbar = () => {
                 <li>
                   <Link className="nav-link" to="/sgc/relatorio">
                     Relatórios
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/sgc/ocorrencia">
+                    Ocorrências
                   </Link>
                 </li>
                 {isAdmin && (

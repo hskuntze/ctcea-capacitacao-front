@@ -61,7 +61,7 @@ const UsuarioInspect = () => {
               <b>Nome de guerra: </b>{" "}{usuario?.nomeGuerra}
             </span>
             <span>
-              <b>Posto: </b>{" "}{usuario?.posto ? usuario.posto.titulo : ""}
+              <b>Posto/graduação: </b>{" "}{usuario?.posto ? usuario.posto.titulo : ""}
             </span>
             <span>
               <b>E-mail: </b>{" "}{usuario?.email}

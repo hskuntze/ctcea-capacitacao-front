@@ -66,7 +66,7 @@ const CapacitacaoInspect = () => {
                 <b>Brigada:</b> {capacitado?.brigadaMilitar}
               </span>
               <span>
-                <b>Posto:</b> {capacitado?.posto.titulo}
+                <b>Posto/graduação:</b> {capacitado?.posto.titulo}
               </span>
             </>
           )}

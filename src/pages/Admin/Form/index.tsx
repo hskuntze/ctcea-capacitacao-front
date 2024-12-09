@@ -90,7 +90,7 @@ const UsuarioForm = () => {
         setPostos(data);
       })
       .catch(() => {
-        toast.error("Não foi possível carregar os postos.");
+        toast.error("Não foi possível carregar os postos/graduações.");
       });
   }, []);
 
@@ -328,7 +328,7 @@ const UsuarioForm = () => {
                         }`}
                         {...field}
                       >
-                        <option value="">Selecione um posto</option>
+                        <option value="">Selecione um posto/graduação</option>
                         {postos &&
                           postos.length > 0 &&
                           postos.map((p) => (
@@ -337,7 +337,7 @@ const UsuarioForm = () => {
                       </select>
                     )}
                   />
-                  <label htmlFor="nome-guerra">Posto</label>
+                  <label htmlFor="posto">Posto/graduação</label>
                   <div className="invalid-feedback d-block">
                     {errors.posto?.message}
                   </div>

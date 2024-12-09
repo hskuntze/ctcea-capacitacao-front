@@ -44,6 +44,13 @@
   margin: 0 auto;
 }
 
+.graficos-relatorio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (min-width: 576px) {
   .relatorio-export-buttons {
     width: 170px;
@@ -66,5 +73,12 @@
   .relatorio-filtro .form-select {
     width: calc((100% - 20px) / 6);
     margin: 0 auto;
+  }
+
+  .graficos-relatorio {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
   }
 }

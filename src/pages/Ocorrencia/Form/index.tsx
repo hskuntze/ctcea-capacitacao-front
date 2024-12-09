@@ -1050,7 +1050,6 @@ const OcorrenciaForm = () => {
                   />
                   <label htmlFor="obs-gerais">
                     Observações gerais
-                    <span className="campo-obrigatorio">*</span>
                   </label>
                   <div className="invalid-feedback d-block">
                     {errors.observacoesGerais?.message}

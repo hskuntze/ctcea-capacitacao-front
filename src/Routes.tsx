@@ -5,6 +5,7 @@ import Avaliacao from "pages/Avaliacao";
 import Capacitado from "pages/Capacitado";
 import Confirmar from "pages/Confirmar";
 import Home from "pages/Home";
+import NaoEncontrado from "pages/NaoEncontrado";
 import Ocorrencia from "pages/Ocorrencia";
 import Relatorio from "pages/Relatorio";
 import Treinamento from "pages/Treinamento";
@@ -33,6 +34,7 @@ const Routes = () => {
           <Route path="/" element={<Navigate to="/sgc" />} />
           <Route path="/sgc/*" element={<Auth />} />
           <Route path="/sgc/confirmado" element={<Confirmar />} />
+          <Route path="/sgc/nao-encontrado" element={<NaoEncontrado />} />
           <Route
             path="/sgc"
             element={

@@ -283,8 +283,12 @@ const TreinamentoForm = () => {
           setValue("logisticaTreinamentos", logisticaFiles);
           setLogisticaFiles(data.logisticaTreinamentos);
         })
-        .catch(() => {
-          toast.error("Não foi possível carregar os registros de treinamento.");
+        .catch((err) => {
+          if(err.response && err.response.data.message) {
+            toast.error(err.response.data.message);
+          } else {
+            toast.error("Erro ao carregar informações do treinamento.");
+          }
         });
     } else {
       const requestParams: AxiosRequestConfig = {
@@ -1175,7 +1179,7 @@ const TreinamentoForm = () => {
               {logisticaFiles.length > 0 && (
                 <ul className="lista-arquivos">
                   {logisticaFiles.map((file, index) => (
-                    <li>
+                    <li key={file.id}>
                       <span>{file.fileName}</span>
                       <button
                         type="button"

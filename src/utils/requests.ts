@@ -14,6 +14,11 @@ type LoginData = {
   password: string;
 };
 
+/**
+ * Requisição específica para a funcionalidade de login do back-end
+ * @param loginData 
+ * @returns 
+ */
 export const requestBackendLogin = (loginData: LoginData) => {
   const headers = {
     "Content-Type": "application/x-www-form-urlencoded",
@@ -34,6 +39,11 @@ export const requestBackendLogin = (loginData: LoginData) => {
   });
 };
 
+/**
+ * Requisição genérica para o back-end
+ * @param config - AxiosRequestConfig
+ * @returns Resposta HTTP
+ */
 export const requestBackend = (config: AxiosRequestConfig) => {
   const headers = config.withCredentials
     ? {

@@ -4,6 +4,14 @@ import AvaliacaoList from "./List";
 import "./styles.css";
 import { Route, Routes } from "react-router-dom";
 
+/**
+ * Página de controle do módulo de avaliações
+ * Rota correspondente: /avaliacao
+ * 
+ * List: lista os registros do módulo
+ * Form: formulário para registrar ou atualizar determinado registro baseado no ID
+ * Inspect: exibe todas as informações do registro baseado no ID
+ */
 const Avaliacao = () => {
   return (
     <>

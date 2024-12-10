@@ -7,9 +7,12 @@ import { Link } from "react-router-dom";
 
 interface Props {
   element: User;
-  onLoad: () => void;
+  onLoad: () => void; //Trigger para que ao deletar o registro recarregue as informações da página
 }
 
+/**
+ * Elemento para exibição na listagem de usuários
+ */
 const UsuarioCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(

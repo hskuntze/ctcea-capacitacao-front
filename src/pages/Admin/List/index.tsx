@@ -108,7 +108,7 @@ const UsuarioList = () => {
         ["Nome de guerra", u.nomeGuerra ? u.nomeGuerra : ""],
         ["OM/Instituição", u.instituicao ? u.instituicao : ""],
         ["Telefone", u.telefone],
-        ["Posto", posto]
+        ["Posto/graduação", posto]
       ];
 
       data.forEach(([k, v]) => {

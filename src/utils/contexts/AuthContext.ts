@@ -1,6 +1,11 @@
 import { createContext } from "react";
 import { TokenData } from "types/token";
 
+/**
+ * Contexto de Autorização
+ * - authenticated: se está, ou não, autenticado
+ * - tokenData?: dados do token
+ */
 export type AuthContextData = {
   authenticated: boolean;
   tokenData?: TokenData;

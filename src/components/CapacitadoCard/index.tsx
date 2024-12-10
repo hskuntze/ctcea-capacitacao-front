@@ -8,9 +8,12 @@ import { toast } from "react-toastify";
 
 interface Props {
   element: CapacitadoType;
-  onLoad: () => void;
+  onLoad: () => void; //Trigger para que ao deletar o registro recarregue as informações da página
 }
 
+/**
+ * Elemento para exibição na listagem de capacitados
+ */
 const CapacitadoCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(

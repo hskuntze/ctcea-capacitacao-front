@@ -1,3 +1,4 @@
+import { OM } from "./om";
 import { Perfil } from "./perfil";
 import { Posto } from "./posto";
 
@@ -15,4 +16,7 @@ export type User = {
   registroCompleto: boolean;
   perfis: Perfil[];
   posto: Posto;
+  brigada: string;
+  om: OM;
+  funcao: string;
 };

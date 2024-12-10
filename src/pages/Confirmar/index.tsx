@@ -1,6 +1,10 @@
 import Navbar from "components/Navbar";
 import "./styles.css";
 
+/**
+ * Página de controle para receber o redirecionamento da confirmação de cadastro do usuário
+ * Rota correspondente: /confirmado
+ */
 const Confirmar = () => {
   return (
     <>

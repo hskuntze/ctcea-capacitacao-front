@@ -17,6 +17,13 @@ import {
 } from "react-router-dom";
 import { isAuthenticated } from "utils/auth";
 
+/**
+ * Componente que controla as rotas da aplicação.
+ * O prefixo definido para as rotas é "/sgc".
+ * Utiliza o BrowserRouter, comum para aplicações web 
+ * e SPA (Single Page Applications), sendo capaz de 
+ * gerenciar o histórico de navegação.
+ */
 const Routes = () => {
   return (
     <BrowserRouter>

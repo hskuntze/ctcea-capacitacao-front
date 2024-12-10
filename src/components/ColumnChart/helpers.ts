@@ -1,5 +1,14 @@
 import { ApexOptions } from "apexcharts";
 
+/**
+ * Função responsável pela construção das propriedades/opções 
+ * que são utilizadas pela biblioteca para montar o gráfico
+ * @param data 
+ * @param labels 
+ * @param title 
+ * @param colors 
+ * @returns 
+ */
 export const buildColumnChart = (
   data: number[] = [],
   labels: string[] = [],

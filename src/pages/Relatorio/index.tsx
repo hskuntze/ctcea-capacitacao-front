@@ -17,6 +17,10 @@ import ColumnChart from "components/ColumnChart";
 import { TreinamentoPorStatus } from "types/relatorio/treinamentoPorStatus";
 import { TreinamentoPorOM } from "types/relatorio/treinamentoPorOm";
 
+/**
+ * Página de controle do módulo de relatório
+ * Rota correspondente: /relatorio
+ */
 const Relatorio = () => {
   const { handleSubmit } = useForm();
 

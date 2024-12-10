@@ -7,9 +7,12 @@ import { AvaliacaoType } from "types/avaliacao";
 
 interface Props {
   element: AvaliacaoType;
-  onLoad: () => void;
+  onLoad: () => void; //Trigger para que ao deletar o registro recarregue as informações da página
 }
 
+/**
+ * Elemento para exibição na listagem de avaliações
+ */
 const AvaliacaoCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(

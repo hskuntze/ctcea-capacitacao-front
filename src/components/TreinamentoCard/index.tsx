@@ -8,9 +8,12 @@ import { toast } from "react-toastify";
 
 interface Props {
   element: TreinamentoType;
-  onLoad: () => void;
+  onLoad: () => void; //Trigger para que ao deletar o registro recarregue as informações da página
 }
 
+/**
+ * Elemento para exibição na listagem de treinamentos
+ */
 const TreinamentoCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(

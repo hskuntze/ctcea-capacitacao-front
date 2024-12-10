@@ -3,6 +3,14 @@ import Login from "./Login";
 import Recover from "./Recover";
 import EnviarEmail from "./EnviarEmail";
 
+/**
+ * Página de controle do login
+ * Rota correspondente: / (quando não se está logado)
+ * 
+ * Login: tela de login
+ * Recover: tela para realizar a troca da senha
+ * EnviarEmail: tela para realizar o envio de e-mail para trocar a senha
+ */
 const Auth = () => {
   return (
     <section>

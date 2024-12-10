@@ -1,46 +1,70 @@
-# Getting Started with Create React App
+# SGC - Sistema de Gestão de Capacitação
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+O SGC é uma aplicação desenvolvida para facilitar a gestão de capacitações, permitindo o gerenciamento eficiente de treinamentos, capacitados, ocorrências, avaliação dos treinamentos e relatórios.
+O sistema oferece uma interface intuitiva e funcionalidades avançadas como geração de gráficos, autenticação JWT e exportação de dados para Excel.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Tecnologias utilizadas
 
-### `npm start`
+- **React**: versão 18
+- **Node.js**: versão 22
+- **Create React App**: base para iniciar o projeto
+- **Typescript**: superset do Javascript para utilizar tipos garantindo mais segurança para o código
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Bibliotecas principais
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+| Biblioteca              | Versão   | Finalidade                                       |
+|-------------------------|----------|--------------------------------------------------|
+| **ApexCharts**          | ^4.1.0   | Gráficos interativos                             |
+| **Axios**               | ^1.7.7   | Comunicação com APIs                             |
+| **Bootstrap**           | ^5.3.3   | Estilização e design responsivo                  |
+| **Day.js**              | ^1.11.13 | Manipulação de datas                             |
+| **jsPDF**               | ^2.5.2   | Geração de arquivos PDF                          |
+| **jwt-decode**          | ^4.0.0   | Decodificação de tokens JWT                      |
+| **qs**                  | ^6.13.1  | Manipulação de queries                           |
+| **Sass**                | ^1.81.0  | Pré-processamento de CSS                         |
+| **@mui/material**       | ^6.1.8   | Componentes de UI do Material-UI                 |
+| **@mui/x-date-pickers** | ^7.22.3  | Seleção de datas                                 |
+| **XLSX**                | ^0.18.5  | Exportação de dados para Excel                   |
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠️ Pré-requisitos
 
-### `npm run build`
+Antes de começar, certifique-se de ter o seguinte instalado:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (versão 22 ou superior)
+- Gerenciador de pacotes (npm ou yarn)
+- Navegador atualizado
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📂 Estrutura do projeto
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+src/
+├── assets/          # Recursos da aplicação (fontes, imagens e estilos)
+├── components/      # Componentes reutilizáveis
+├── pages/           # Páginas principais da aplicação
+├── types/           # Tipagens que a aplicação usa
+├── utils/           # Funções utilitárias
+└── App.tsx          # Componente raiz da aplicação
 
-### `npm run eject`
+## 📦 Instalação
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. Clone o repositório e acesse a pasta do clone (cd ctcea-capacitacao-front):
+--> https://github.com/hskuntze/ctcea-capacitacao-front
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Criar o arquivo config.ts:
+--> Este arquivo é um objeto "config" que tem duas propriedades:
+- CLIENT_ID: string;
+- CLIENT_SECRET: string;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+3. Baixar as dependências da aplicação:
+--> npm install
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+4. Iniciar a aplicação:
+--> npm start
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📜 Scripts disponíveis
+- npm start: Inicia a aplicação em modo de desenvolvimento (porta padrão [3000]).
+- npm run build: Gera os arquivos de produção.
+- npm test: Roda os testes configurados.

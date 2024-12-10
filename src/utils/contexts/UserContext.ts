@@ -1,6 +1,10 @@
 import { createContext } from "react";
 import { User } from "types/user";
 
+/**
+ * Contexto de Usuário
+ * - user?: dados do usuário
+ */
 export type UserContextData = {
   user?: User;
 };

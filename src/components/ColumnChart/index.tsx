@@ -9,6 +9,13 @@ type Props = {
   colors: string[];
 };
 
+/**
+ * Componente de gráfico de colunas. Recebe os parâmetros:
+ * - data: os dados que serão exibidos
+ * - labels: rótulos dos dados
+ * - title: título do gráfico
+ * - colors: array de cores para as colunas
+ */
 const ColumnChart = ({ data, labels, title, colors }: Props) => {
   return (
     <div className="relatorio-chart">

@@ -8,6 +8,8 @@ import { requestBackend } from "utils/requests";
 import { toast } from "react-toastify";
 import Loader from "components/Loader";
 import { User } from "types/user";
+import { OM } from "types/om";
+import { Perfil } from "types/perfil";
 
 type FormData = {
   nome: string;
@@ -20,6 +22,10 @@ type FormData = {
   senha: string;
   tipo: string;
   posto: number;
+  brigada: string;
+  om: OM;
+  funcao: string;
+  perfil: Perfil;
 };
 
 const UsuarioForm = () => {
@@ -35,6 +41,8 @@ const UsuarioForm = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isCivil, setIsCivil] = useState<boolean | null>(null);
   const [postos, setPostos] = useState<Posto[]>([]);
+  const [oms, setOms] = useState<OM[]>([]);
+  const [bdas, setBdas] = useState<string[]>([]);
 
   const urlParams = useParams();
   const navigate = useNavigate();
@@ -51,11 +59,14 @@ const UsuarioForm = () => {
         password: formData.senha,
         perfis: [
           {
-            id: 2,
+            id: formData.perfil.id,
           },
         ],
         posto: {
           id: formData.posto,
+        },
+        om: {
+          codigo: formData.om.codigo,
         },
       },
     };
@@ -94,6 +105,38 @@ const UsuarioForm = () => {
       });
   }, []);
 
+  const loadOms = useCallback(() => {
+    const requestOmParams: AxiosRequestConfig = {
+      url: "/oms",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestOmParams)
+      .then((res) => {
+        setOms(res.data as OM[]);
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  }, []);
+
+  const loadBdas = useCallback(() => {
+    const requestOmParams: AxiosRequestConfig = {
+      url: "/oms/bdas",
+      method: "GET",
+      withCredentials: true,
+    };
+
+    requestBackend(requestOmParams)
+      .then((res) => {
+        setBdas(res.data as string[]);
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  }, []);
+
   const loadInfo = useCallback(() => {
     if (isEditing) {
       setLoading(true);
@@ -118,10 +161,21 @@ const UsuarioForm = () => {
           if (data.posto) {
             setValue("posto", data.posto.id);
           }
+          if (data.om) {
+            setValue("om", data.om);
+            setValue("om.codigo", data.om.codigo);
+          }
+          if (data.brigada) {
+            setValue("brigada", data.brigada);
+          }
+          setValue("funcao", data.funcao);
           setValue("sobrenome", data.sobrenome);
           setValue("tipo", String(data.tipo));
           setIsCivil(data.tipo === 2 ? true : false);
           setValue("telefone", data.telefone);
+
+          setValue("perfil", data.perfis[0]);
+          setValue("perfil.id", data.perfis[0].id);
         })
         .catch((err) => {
           toast.error("Erro ao tentar carregar informações do usuário.");
@@ -146,7 +200,9 @@ const UsuarioForm = () => {
   useEffect(() => {
     loadInfo();
     loadPostos();
-  }, [loadPostos, loadInfo]);
+    loadOms();
+    loadBdas();
+  }, [loadPostos, loadInfo, loadBdas, loadOms]);
 
   return (
     <div className="treinamento-container">
@@ -222,6 +278,19 @@ const UsuarioForm = () => {
                 </div>
                 <div className="treinamento-input-group form-floating">
                   <input
+                    type="text"
+                    className={`form-control`}
+                    id="funcao"
+                    placeholder="Função"
+                    {...register("funcao")}
+                  />
+                  <label htmlFor="funcao">Função</label>
+                  <div className="invalid-feedback d-block">
+                    {errors.funcao?.message}
+                  </div>
+                </div>
+                <div className="treinamento-input-group form-floating">
+                  <input
                     type="email"
                     className={`form-control`}
                     id="email"
@@ -233,19 +302,21 @@ const UsuarioForm = () => {
                     {errors.email?.message}
                   </div>
                 </div>
-                <div className="treinamento-input-group form-floating">
-                  <input
-                    type="text"
-                    className={`form-control`}
-                    id="instituicao"
-                    placeholder="Nome"
-                    {...register("instituicao")}
-                  />
-                  <label htmlFor="instituicao">Instituição</label>
-                  <div className="invalid-feedback d-block">
-                    {errors.instituicao?.message}
+                {isCivil && (
+                  <div className="treinamento-input-group form-floating">
+                    <input
+                      type="text"
+                      className={`form-control`}
+                      id="instituicao"
+                      placeholder="Instituição"
+                      {...register("instituicao")}
+                    />
+                    <label htmlFor="instituicao">Instituição</label>
+                    <div className="invalid-feedback d-block">
+                      {errors.instituicao?.message}
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="treinamento-input-group form-floating">
                   <input
                     type="text"
@@ -257,6 +328,33 @@ const UsuarioForm = () => {
                   <label htmlFor="identidade">Identidade</label>
                   <div className="invalid-feedback d-block">
                     {errors.identidade?.message}
+                  </div>
+                </div>
+                <div className="treinamento-input-group form-floating">
+                  <Controller
+                    name="perfil.id"
+                    control={control}
+                    rules={{ required: "Campo obrigatório" }}
+                    render={({ field }) => (
+                      <select
+                        id="perfil"
+                        className={`form-select ${
+                          errors.perfil ? "is-invalid" : ""
+                        }`}
+                        {...field}
+                        value={field.value}
+                      >
+                        <option>Selecione uma perfil</option>
+                        <option value={1}>Admin</option>
+                        <option value={2}>Usuário</option>
+                      </select>
+                    )}
+                  />
+                  <label htmlFor="perfil">
+                    Perfil<span className="campo-obrigatorio">*</span>
+                  </label>
+                  <div className="invalid-feedback d-block">
+                    {errors.perfil?.message}
                   </div>
                 </div>
                 {!isEditing && (
@@ -340,6 +438,69 @@ const UsuarioForm = () => {
                   <label htmlFor="posto">Posto/graduação</label>
                   <div className="invalid-feedback d-block">
                     {errors.posto?.message}
+                  </div>
+                </div>
+                {/* Brigada */}
+                <div className="treinamento-input-group form-floating">
+                  <Controller
+                    name="brigada"
+                    control={control}
+                    rules={{ required: "Campo obrigatório" }}
+                    render={({ field }) => (
+                      <select
+                        id="brigada"
+                        {...field}
+                        className={`form-select ${
+                          errors.brigada ? "is-invalid" : ""
+                        }`}
+                      >
+                        <option>Selecione uma brigada</option>
+                        {bdas &&
+                          bdas.map((bda) => (
+                            <option key={bda} value={bda}>
+                              {bda}
+                            </option>
+                          ))}
+                      </select>
+                    )}
+                  />
+                  <label htmlFor="brigada">
+                    Brigada<span className="campo-obrigatorio">*</span>
+                  </label>
+                  <div className="invalid-feedback d-block">
+                    {errors.brigada?.message}
+                  </div>
+                </div>
+                {/* OM */}
+                <div className="treinamento-input-group form-floating">
+                  <Controller
+                    name="om.codigo"
+                    control={control}
+                    rules={{ required: "Campo obrigatório" }}
+                    render={({ field }) => (
+                      <select
+                        id="om"
+                        className={`form-select ${
+                          errors.om ? "is-invalid" : ""
+                        }`}
+                        {...field}
+                        value={field.value}
+                      >
+                        <option>Selecione uma OM</option>
+                        {oms &&
+                          oms.map((om) => (
+                            <option key={om.codigo} value={om.codigo}>
+                              {om.sigla}
+                            </option>
+                          ))}
+                      </select>
+                    )}
+                  />
+                  <label htmlFor="om">
+                    OM<span className="campo-obrigatorio">*</span>
+                  </label>
+                  <div className="invalid-feedback d-block">
+                    {errors.om?.message}
                   </div>
                 </div>
               </>

@@ -8,9 +8,12 @@ import { formatarData, formatarStatusOcorrencia } from "utils/functions";
 
 interface Props {
   element: OcorrenciaType;
-  onLoad: () => void;
+  onLoad: () => void; //Trigger para que ao deletar o registro recarregue as informações da página
 }
 
+/**
+ * Elemento para exibição na listagem de ocorrências
+ */
 const OcorrenciaCard = ({ element, onLoad }: Props) => {
   const deleteElement = (id: number) => {
     let confirm = window.confirm(

@@ -66,7 +66,7 @@ const UsuarioForm = () => {
           id: formData.posto,
         },
         om: {
-          codigo: formData.om.codigo,
+          codigo: formData.om ? formData.om.codigo : null,
         },
       },
     };
@@ -79,9 +79,11 @@ const UsuarioForm = () => {
         navigate("/sgc/usuario");
       })
       .catch((err) => {
-        toast.error(
-          `Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário`
-        );
+        if(err.response && err.response.data.message) {
+          toast.error(`Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário. ${err.response.data.message}`);
+        } else {
+          toast.error(`Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário.`);
+        }
       })
       .finally(() => {
         setLoading(false);

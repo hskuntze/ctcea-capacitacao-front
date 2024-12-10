@@ -14,6 +14,7 @@ import jsPDF from "jspdf";
 const UsuarioList = () => {
   const [loading, setLoading] = useState(false);
   const [usuarios, setUsuarios] = useState<User[]>([]);
+  const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -52,21 +53,40 @@ const UsuarioList = () => {
     setPage(0);
   };
 
-  const paginatedData = usuarios
-    ? usuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    : [];
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(event.target.value.toLowerCase());
+    setPage(0);
+  };
+
+  const filteredData = usuarios.filter((u) => {
+    const searchTerm = filter.trim();
+    if (!searchTerm) return true;
+
+    return (
+      u.nome.toLowerCase().includes(searchTerm) ||
+      (u.sobrenome.toLowerCase().includes(searchTerm) ?? false) ||
+      (u.identidade.toLowerCase().includes(searchTerm) ?? false) ||
+      (u.email.toLowerCase().includes(searchTerm) ?? false) ||
+      u.perfis.some((p) => p.autorizacao.toLowerCase().includes(searchTerm))
+    );
+  });
+
+  const paginatedData = filteredData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const handleExportToExcel = () => {
-    if (paginatedData) {
-      const capacitadosProcessado = paginatedData.map((u) => ({
+    if (filteredData) {
+      const capacitadosProcessado = filteredData.map((u) => ({
         Nome: u.nome,
         Sobrenome: u.sobrenome,
         "Nome de guerra": u.nomeGuerra,
         "OM/Instituição": u.instituicao,
-        "Identidade": u.identidade,
+        Identidade: u.identidade,
         "E-mail": u.email,
-        "Telefone": u.telefone,
-        "Perfis": u.perfis.map((p) => `${p.autorizacao}`).join("; "),
+        Telefone: u.telefone,
+        Perfis: u.perfis.map((p) => `${p.autorizacao}`).join("; "),
         "Posto/graduação": u.posto ? u.posto.titulo : "",
       }));
 
@@ -91,7 +111,7 @@ const UsuarioList = () => {
     const marginLeft = 15;
     const colWidth = 50;
 
-    paginatedData?.forEach((u, i) => {
+    filteredData?.forEach((u, i) => {
       doc.setFont("helvetica", "bold");
       doc.text(u.nome, marginLeft, y);
       y += lineHeight;
@@ -108,7 +128,7 @@ const UsuarioList = () => {
         ["Nome de guerra", u.nomeGuerra ? u.nomeGuerra : ""],
         ["OM/Instituição", u.instituicao ? u.instituicao : ""],
         ["Telefone", u.telefone],
-        ["Posto/graduação", posto]
+        ["Posto/graduação", posto],
       ];
 
       data.forEach(([k, v]) => {
@@ -157,6 +177,25 @@ const UsuarioList = () => {
           <i className="bi bi-file-earmark-excel" />
         </button>
       </div>
+      <div className="filtro-container">
+        <form>
+          <div className="filtro-input-div form-floating">
+            <input
+              type="text"
+              className="form-control filtro-input"
+              id="titulo-ocorrencia-filtro"
+              placeholder="Digite um termo para filtrar"
+              onChange={handleFilterChange}
+            />
+            <label htmlFor="titulo-ocorrencia-filtro">
+              Digite um termo para filtrar
+            </label>
+          </div>
+          <button className="search-button" type="button">
+            <i className="bi bi-search" />
+          </button>
+        </form>
+      </div>
       <div className="list-container">
         {loading ? (
           <div className="loader-div">
@@ -195,7 +234,7 @@ const UsuarioList = () => {
                   <TablePagination
                     className="table-pagination-container"
                     component="div"
-                    count={usuarios ? usuarios.length : 0}
+                    count={filteredData.length}
                     page={page}
                     onPageChange={handlePageChange}
                     rowsPerPage={rowsPerPage}

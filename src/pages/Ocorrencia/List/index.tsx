@@ -63,7 +63,12 @@ const OcorrenciaList = () => {
     const searchTerm = filter.trim();
     if (!searchTerm) return true;
 
-    return o.titulo.toLowerCase().includes(searchTerm);
+    return (o.titulo.toLowerCase().includes(searchTerm) ||
+      (o.treinamento.treinamento.toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarData(o.dataOcorrencia).toLowerCase().includes(searchTerm) ?? false) ||
+      (formatarStatusOcorrencia(o.statusClassificacao).toLowerCase().includes(searchTerm) ?? false) ||
+      (o.nomeResponsavelOcorrencia.toLowerCase().includes(searchTerm) ?? false)
+    );
   });
 
   const handleExportToExcel = () => {
@@ -232,7 +237,7 @@ const OcorrenciaList = () => {
                   <TablePagination
                     className="table-pagination-container"
                     component="div"
-                    count={ocorrencias ? ocorrencias.length : 0}
+                    count={filteredData.length}
                     page={page}
                     onPageChange={handlePageChange}
                     rowsPerPage={rowsPerPage}

@@ -58,14 +58,14 @@ const AvaliacaoList = () => {
     setPage(0);
   };
 
-  const filteredData = avaliacoes.filter((c) => {
+  const filteredData = avaliacoes.filter((a) => {
     const searchTerm = filter.trim();
     if (!searchTerm) return true;
 
     return (
-      c.treinamento.treinamento.toLowerCase().includes(searchTerm) ||
-      (c.treinamento.brigada.toLowerCase().includes(searchTerm) ?? false) ||
-      (c.treinamento.om.sigla.toLowerCase().includes(searchTerm) ?? false)
+      a.treinamento.treinamento.toLowerCase().includes(searchTerm) ||
+      (a.nomeResponsavel.toLowerCase().includes(searchTerm) ?? false) ||
+      (String(a.avaliacaoGeralTreinamento).includes(searchTerm) ?? false)
     );
   });
 
@@ -373,7 +373,7 @@ const AvaliacaoList = () => {
                   <TablePagination
                     className="table-pagination-container"
                     component="div"
-                    count={paginatedData.length}
+                    count={filteredData.length}
                     page={page}
                     onPageChange={handlePageChange}
                     rowsPerPage={rowsPerPage}

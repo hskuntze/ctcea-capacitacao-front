@@ -1,0 +1,19 @@
+.nao-encontrado-container {
+  width: calc(100vw - 40px);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 20px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 0 10px 7px #ccc;
+  border-radius: 5px;
+}
+
+.nao-encontrado-container span {
+  margin: 4px 0;
+  font-size: 20px;
+  width: auto;
+  font-weight: 600;
+}

@@ -99,7 +99,7 @@
 
 .input-element-inside {
   color: #333 !important;
-  font-family: 'Rawline', sans-serif !important;
+  font-family: "Rawline", sans-serif !important;
   font-size: 15px !important;
   margin-top: 13px !important;
 }
@@ -132,9 +132,9 @@
 .autocomplete-root label {
   font-size: 15px;
   font-weight: 400;
-  font-family: 'Rawline', sans-serif;
+  font-family: "Rawline", sans-serif;
   color: rgba(var(--bs-body-color-rgb), 0.65) !important;
-  letter-spacing: 0.010em;
+  letter-spacing: 0.01em;
 }
 
 .autocomplete-root .MuiFormLabel-filled {
@@ -180,7 +180,20 @@
 }
 
 .campo-obrigatorio {
-  color: #c71c1c;
+  color: #c71c1c; /* Cor do asterisco */
+  font-size: 26px; /* Tamanho do asterisco */
+  position: absolute; /* Remove do fluxo */
+  margin-left: 2px;
+  line-height: 1; /* Evita esticar a linha */
+}
+
+.bigger-dropdown {
+  width: 200px !important;
+  padding-left: 10px !important;
+}
+
+.arquivo-obrigatorio {
+  left: 1px;
 }
 
 .flex-column {

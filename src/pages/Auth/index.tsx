@@ -16,7 +16,8 @@ const Auth = () => {
     <section>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/recuperarsenha/:token" element={<Recover />} />
+        {/* <Route path="/recuperarsenha/:token" element={<Recover />} /> */}
+        <Route path="/trocarsenha" element={<Recover />} />
         <Route path="/enviaremail" element={<EnviarEmail />} />
       </Routes>
     </section>

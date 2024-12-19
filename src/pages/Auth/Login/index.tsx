@@ -2,7 +2,7 @@ import "./styles.css";
 
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { getTokenData } from "utils/auth";
 import { AuthContext } from "utils/contexts/AuthContext";
@@ -107,11 +107,11 @@ const Login = () => {
           <img src={LogotipoCTCEA} className="logotipo-ctcea" alt="Logotipo SISFRON" />
         </div>
       </form>
-      <Link to="/sgc/enviaremail">
+      {/* <Link to="/sgc/enviaremail">
         <button type="button" className="button">
           Trocar/recuperar senha
         </button>
-      </Link>
+      </Link> */}
     </div>
   );
 };

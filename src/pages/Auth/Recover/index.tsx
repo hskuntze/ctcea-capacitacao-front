@@ -3,23 +3,24 @@ import { AxiosRequestConfig } from "axios";
 import Loader from "components/Loader";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { requestBackend } from "utils/requests";
 
 type FormData = {
+  senhaAntiga: string;
   senha: string;
   confirmarSenha: string;
 };
 
-type UrlParams = {
-  token: string;
-};
+// type UrlParams = {
+//   token: string;
+// };
 
 const Recover = () => {
   const [loading, setLoading] = useState(false);
 
-  const urlParams = useParams<UrlParams>();
+  //const urlParams = useParams<UrlParams>();
   const navigate = useNavigate();
 
   const {
@@ -32,14 +33,23 @@ const Recover = () => {
   const onSubmit = (formData: FormData) => {
     setLoading(true);
 
+    // const requestParams: AxiosRequestConfig = {
+    //   url: "/usuarios/salvarTrocaDeSenha",
+    //   method: "POST",
+    //   withCredentials: false,
+    //   data: {
+    //     password: formData.senha,
+    //     token: urlParams.token,
+    //   },
+    // };
     const requestParams: AxiosRequestConfig = {
       url: "/usuarios/salvarTrocaDeSenha",
       method: "POST",
-      withCredentials: false,
-      data: {
-        password: formData.senha,
-        token: urlParams.token,
-      },
+      withCredentials: true,
+      params: {
+        novaSenha: formData.senha,
+        senhaAntiga: formData.senhaAntiga,
+      }
     };
 
     requestBackend(requestParams)
@@ -67,6 +77,20 @@ const Recover = () => {
           />
         </div>
         <div className="login-form-content">
+        <div className="login-input-group">
+            <input
+              type="password"
+              id="senhaAntiga"
+              placeholder="Senha antiga"
+              className="input-element"
+              {...register("senhaAntiga", {
+                required: "Campo obrigatório",
+              })}
+            />
+            <div className="invalid-feedback d-block div-erro">
+              {errors.senhaAntiga?.message}
+            </div>
+          </div>
           <div className="login-input-group">
             <input
               type="password"

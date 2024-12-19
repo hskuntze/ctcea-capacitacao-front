@@ -97,12 +97,29 @@ const Navbar = () => {
                   </Link>
                 </li>
                 {isAdmin && (
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/sgc/usuario">
-                      Controle de usuário
-                    </Link>
+                  <li className="nav-item dropdown">
+                    <button className="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      Administrador
+                    </button>
+                    <ul className="dropdown-menu bigger-dropdown">
+                      <li>
+                        <Link className="nav-link" to="/sgc/usuario">
+                          Controle de usuário
+                        </Link>
+                      </li>
+                      <li>
+                        <Link className="nav-link" to="/sgc/om">
+                          Controle de OMs
+                        </Link>
+                      </li>
+                    </ul>
                   </li>
                 )}
+                <li className="nav-item">
+                  <Link className="nav-link" to="/sgc/trocarsenha">
+                    Trocar senha
+                  </Link>
+                </li>
                 <li className="nav-item">
                   <button onClick={logout} className="nav-link">
                     Sair <i className="bi bi-door-open" />

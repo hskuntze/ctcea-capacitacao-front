@@ -7,6 +7,7 @@ import Confirmar from "pages/Confirmar";
 import Home from "pages/Home";
 import NaoEncontrado from "pages/NaoEncontrado";
 import Ocorrencia from "pages/Ocorrencia";
+import OMs from "pages/OM";
 import Relatorio from "pages/Relatorio";
 import Treinamento from "pages/Treinamento";
 import PrivateRoute from "PrivateRoute";
@@ -21,8 +22,8 @@ import { isAuthenticated } from "utils/auth";
 /**
  * Componente que controla as rotas da aplicação.
  * O prefixo definido para as rotas é "/sgc".
- * Utiliza o BrowserRouter, comum para aplicações web 
- * e SPA (Single Page Applications), sendo capaz de 
+ * Utiliza o BrowserRouter, comum para aplicações web
+ * e SPA (Single Page Applications), sendo capaz de
  * gerenciar o histórico de navegação.
  */
 const Routes = () => {
@@ -92,6 +93,14 @@ const Routes = () => {
             element={
               <PrivateRoute roles={[{ id: 1, autorizacao: "PERFIL_ADMIN" }]}>
                 <Admin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/sgc/om/*"
+            element={
+              <PrivateRoute roles={[{ id: 1, autorizacao: "PERFIL_ADMIN" }]}>
+                <OMs />
               </PrivateRoute>
             }
           />

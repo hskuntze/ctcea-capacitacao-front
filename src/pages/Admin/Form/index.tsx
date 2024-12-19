@@ -26,6 +26,7 @@ type FormData = {
   om: OM;
   funcao: string;
   perfil: Perfil;
+  habilitado: string;
 };
 
 const UsuarioForm = () => {
@@ -79,10 +80,16 @@ const UsuarioForm = () => {
         navigate("/sgc/usuario");
       })
       .catch((err) => {
-        if(err.response && err.response.data.message) {
-          toast.error(`Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário. ${err.response.data.message}`);
+        if (err.response && err.response.data.message) {
+          toast.error(
+            `Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário. ${
+              err.response.data.message
+            }`
+          );
         } else {
-          toast.error(`Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário.`);
+          toast.error(
+            `Erro ao ${isEditing ? "atualizar" : "registrar"} o usuário.`
+          );
         }
       })
       .finally(() => {
@@ -178,6 +185,8 @@ const UsuarioForm = () => {
 
           setValue("perfil", data.perfis[0]);
           setValue("perfil.id", data.perfis[0].id);
+
+          setValue("habilitado", String(data.habilitado));
         })
         .catch((err) => {
           toast.error("Erro ao tentar carregar informações do usuário.");
@@ -357,6 +366,42 @@ const UsuarioForm = () => {
                   </label>
                   <div className="invalid-feedback d-block">
                     {errors.perfil?.message}
+                  </div>
+                </div>
+                {/* Habilitado */}
+                <div className="treinamento-input-group treinamento-radio-input-group">
+                  <span>
+                    Habilitado<span className="campo-obrigatorio">*</span>
+                  </span>
+                  <div className="form-check">
+                    <input
+                      type="radio"
+                      className={`form-check-input ${
+                        errors.habilitado ? "is-invalid" : ""
+                      }`}
+                      value="true"
+                      id="habilitado-sim"
+                      {...register("habilitado", { required: "Campo obrigatório" })}
+                    />
+                    <label htmlFor="habilitado-sim">Sim</label>
+                    <div className="invalid-feedback d-block">
+                      {errors.habilitado?.message}
+                    </div>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="radio"
+                      className={`form-check-input ${
+                        errors.habilitado ? "is-invalid" : ""
+                      }`}
+                      value="false"
+                      id="habilitado-nao"
+                      {...register("habilitado", { required: "Campo obrigatório" })}
+                    />
+                    <label htmlFor="habilitado-nao">Não</label>
+                    <div className="invalid-feedback d-block">
+                      {errors.habilitado?.message}
+                    </div>
                   </div>
                 </div>
                 {!isEditing && (

@@ -3,6 +3,7 @@ import "./styles.css";
 
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/pt-br"; 
 import dayjs, { Dayjs } from "dayjs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -61,6 +62,8 @@ const TreinamentoForm = () => {
   const [logisticaFiles, setLogisticaFiles] = useState<LogisticasTreinamento[]>(
     []
   );
+
+  dayjs.locale("pt-br");
 
   const {
     register,
@@ -872,7 +875,7 @@ const TreinamentoForm = () => {
             </div>
             {/* Data início */}
             <div className="treinamento-input-group">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
                 <Controller
                   name="dataInicio"
                   control={control}
@@ -900,7 +903,7 @@ const TreinamentoForm = () => {
             </div>
             {/* Data fim */}
             <div className="treinamento-input-group">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
                 <Controller
                   name="dataFim"
                   control={control}
@@ -1158,7 +1161,7 @@ const TreinamentoForm = () => {
             <div className="treinamento-input-group input-group">
               <label className="input-group-text" htmlFor="material-didatico">
                 Logística de treinamento
-                <span className="campo-obrigatorio">*</span>
+                <span className="campo-obrigatorio arquivo-obrigatorio">*</span>
               </label>
               <input
                 type="file"
@@ -1211,7 +1214,7 @@ const TreinamentoForm = () => {
             {/* Material didático */}
             <div className="treinamento-input-group input-group">
               <label className="input-group-text" htmlFor="material-didatico">
-                Material didático<span className="campo-obrigatorio">*</span>
+                Material didático<span className="campo-obrigatorio arquivo-obrigatorio">*</span>
               </label>
               <input
                 type="file"
@@ -1384,7 +1387,7 @@ const TreinamentoForm = () => {
             {/* Contato do instrutor */}
             <div className="treinamento-input-group">
               {instrutorFields.map((field, index) => (
-                <div key={field.email}>
+                <div key={field.id}>
                   <h6>
                     <b>Instrutor {index + 1}</b>
                   </h6>
